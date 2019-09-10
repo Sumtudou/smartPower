@@ -12,7 +12,7 @@
     <parent>
         <groupId>com.linln</groupId>
         <artifactId>modules</artifactId>
-        <version>2.0.2</version>
+        <version>1.0</version>
     </parent>
 
     <dependencies>
