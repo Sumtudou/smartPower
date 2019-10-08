@@ -57,6 +57,7 @@
                 </includes>
             </resource>
         </resources>
+        <finalName>smartpower</finalName>
     </build>
 
 </project>
