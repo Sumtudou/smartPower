@@ -68,6 +68,6 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
-        <finalName>smartpower</finalName>
+        <finalName>osm</finalName>
     </build>
 </project>

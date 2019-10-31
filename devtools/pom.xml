@@ -57,7 +57,7 @@
                 </includes>
             </resource>
         </resources>
-        <finalName>smartpower</finalName>
+        <finalName>osm</finalName>
     </build>
 
 </project>
