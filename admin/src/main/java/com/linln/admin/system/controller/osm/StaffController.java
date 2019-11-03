@@ -1,4 +1,4 @@
-package com.linln.admin.system.controller;
+package com.linln.admin.system.controller.osm;
 
 import com.linln.admin.system.domain.Staff;
 import com.linln.admin.system.mapper.StaffMapper;

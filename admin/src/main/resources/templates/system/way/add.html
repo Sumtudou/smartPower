@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+    <div class="layui-form timo-compile">
+    <form th:action="@{/system/way/save}">
+        <input type="hidden" name="id" th:if="${way}" th:value="${way.id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">nid</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="nid" placeholder="请输入nid" th:value="${way?.nid}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">可视化</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="visible" placeholder="请输入可视化" th:value="${way?.visible}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">版本</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="version" placeholder="请输入版本" th:value="${way?.version}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">改变</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="changeset" placeholder="请输入改变" th:value="${way?.changeset}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">时间</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="timestamp" placeholder="请输入时间" th:value="${way?.timestamp}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">使用者名字</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="user" placeholder="请输入使用者名字" th:value="${way?.user}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户id</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="uid" placeholder="请输入用户id" th:value="${way?.uid}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">纬度</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="lat" placeholder="请输入纬度" th:value="${way?.lat}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">经度</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="lon" placeholder="请输入经度" th:value="${way?.lon}">
+            </div>
+        </div>
+        <div class="layui-form-item timo-finally">
+            <button class="layui-btn ajax-submit"><i class="fa fa-check-circle"></i> 保存</button>
+            <button class="layui-btn btn-secondary close-popup"><i class="fa fa-times-circle"></i> 关闭</button>
+        </div>
+    </form>
+</div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>
