@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+    <div class="timo-detail-page">
+        <div class="timo-detail-title">基本信息</div>
+        <table class="layui-table timo-detail-table">
+            <colgroup>
+                <col width="100px"><col>
+                <col width="100px"><col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>主键ID</th>
+                    <td th:text="${road.id}"></td>
+                    <th>id</th>
+                    <td th:text="${road.nid}"></td>
+                </tr>
+                <tr>
+                    <th>可视化</th>
+                    <td th:text="${road.visible}"></td>
+                    <th>版本</th>
+                    <td th:text="${road.version}"></td>
+                </tr>
+                <tr>
+                    <th>可变</th>
+                    <td th:text="${road.changeset}"></td>
+                    <th>时间</th>
+                    <td th:text="${road.timestamp}"></td>
+                </tr>
+                <tr>
+                    <th>用户名</th>
+                    <td th:text="${road.user}"></td>
+                    <th>用户id</th>
+                    <td th:text="${road.uid}"></td>
+                </tr>
+                <tr>
+                    <th>key</th>
+                    <td th:text="${road.tagkey}"></td>
+                    <th>value</th>
+                    <td th:text="${road.tagvalue}"></td>
+                </tr>
+                <tr>
+                    <th>点的id集合</th>
+                    <td th:text="${road.nd}" colspan="3"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@
 <body class="timo-layout-page">
     <div class="layui-card">
         <div class="layui-card-header timo-card-header">
-            <span><i class="fa fa-bars"></i> way管理</span>
+            <span><i class="fa fa-bars"></i> road管理</span>
             <i class="layui-icon layui-icon-refresh refresh-btn"></i>
         </div>
         <div class="layui-card-body">
@@ -25,14 +25,14 @@
                     </div>
                 </div>
                 <div class="pull-right screen-btn-group">
-                    <button class="layui-btn open-popup" data-title="添加way" th:attr="data-url=@{/system/way/add}" data-size="auto">
+                    <button class="layui-btn open-popup" data-title="添加road" th:attr="data-url=@{/system/road/add}" data-size="auto">
                         <i class="fa fa-plus"></i> 添加</button>
                     <div class="btn-group">
                         <button class="layui-btn">操作<span class="caret"></span></button>
                         <dl class="layui-nav-child layui-anim layui-anim-upbit">
-                            <dd><a class="ajax-status" th:href="@{/system/way/status/ok}">启用</a></dd>
-                            <dd><a class="ajax-status" th:href="@{/system/way/status/freezed}">冻结</a></dd>
-                            <dd><a class="ajax-status" th:href="@{/system/way/status/delete}">删除</a></dd>
+                            <dd><a class="ajax-status" th:href="@{/system/road/status/ok}">启用</a></dd>
+                            <dd><a class="ajax-status" th:href="@{/system/road/status/freezed}">冻结</a></dd>
+                            <dd><a class="ajax-status" th:href="@{/system/road/status/delete}">删除</a></dd>
                         </dl>
                     </div>
                 </div>
@@ -46,15 +46,16 @@
                                 <i class="layui-icon layui-icon-ok"></i></label>
                         </th>
                         <th>主键ID</th>
-                        <th>nid</th>
+                        <th>id</th>
                         <th>可视化</th>
                         <th>版本</th>
-                        <th>改变</th>
+                        <th>可变</th>
                         <th>时间</th>
-                        <th>使用者名字</th>
+                        <th>用户名</th>
                         <th>用户id</th>
-                        <th>纬度</th>
-                        <th>经度</th>
+                        <th>key</th>
+                        <th>value</th>
+                        <th>点的id集合</th>
                         <th>数据状态</th>
                         <th>操作</th>
                     </tr>
@@ -64,20 +65,21 @@
                         <td><label class="timo-checkbox"><input type="checkbox" th:value="${item.id}">
                             <i class="layui-icon layui-icon-ok"></i></label></td>
                         <td th:text="${item.id}">主键ID</td>
-                        <td th:text="${item.nid}">nid</td>
+                        <td th:text="${item.nid}">id</td>
                         <td th:text="${item.visible}">可视化</td>
                         <td th:text="${item.version}">版本</td>
-                        <td th:text="${item.changeset}">改变</td>
+                        <td th:text="${item.changeset}">可变</td>
                         <td th:text="${item.timestamp}">时间</td>
-                        <td th:text="${item.user}">使用者名字</td>
+                        <td th:text="${item.user}">用户名</td>
                         <td th:text="${item.uid}">用户id</td>
-                        <td th:text="${item.lat}">纬度</td>
-                        <td th:text="${item.lon}">经度</td>
+                        <td th:text="${item.tagkey}">key</td>
+                        <td th:text="${item.tagvalue}">value</td>
+                        <td th:text="${item.nd}">点的id集合</td>
                         <td th:text="${#dicts.dataStatus(item.status)}">数据状态</td>
                         <td>
-                            <a class="open-popup" data-title="编辑way" th:attr="data-url=@{'/system/way/edit/'+${item.id}}" data-size="auto" href="#">编辑</a>
-                            <a class="open-popup" data-title="详细信息" th:attr="data-url=@{'/system/way/detail/'+${item.id}}" data-size="800,600" href="#">详细</a>
-                            <a class="ajax-get" data-msg="您是否确认删除" th:href="@{/system/way/status/delete(ids=${item.id})}">删除</a>
+                            <a class="open-popup" data-title="编辑road" th:attr="data-url=@{'/system/road/edit/'+${item.id}}" data-size="auto" href="#">编辑</a>
+                            <a class="open-popup" data-title="详细信息" th:attr="data-url=@{'/system/road/detail/'+${item.id}}" data-size="800,600" href="#">详细</a>
+                            <a class="ajax-get" data-msg="您是否确认删除" th:href="@{/system/road/status/delete(ids=${item.id})}">删除</a>
                         </td>
                     </tr>
                     </tbody>

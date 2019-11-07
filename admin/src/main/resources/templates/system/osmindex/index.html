@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:mo="https://gitee.com/aun/Timo">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+    <script type="text/javascript" src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/static/layer/layer.js"></script>
+    <link href="https://sumtudou.oss-cn-shanghai.aliyuncs.com/static/layer/mobile/need/layer.css" rel="stylesheet">
+</head>
+<body class="timo-layout-page">
+<div class="layui-card">
+    <div class="layui-card-header timo-card-header">
+        <span><i class="fa fa-bars"></i> way管理</span>
+        <i class="layui-icon layui-icon-refresh refresh-btn"></i>
+    </div>
+    <div class="layui-card-body">
+        <div style="min-height: 200px">
+
+                <div id="buttons" style="margin-left: 40%;margin-top: 30px;">
+                    <a href="#" class="layui-btn">选择文件</a>
+                    <button type="button" id="submit" class="layui-btn"> 插入数据库</button>
+                </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:replace="/common/template :: script"></script>
+
+
+<script>
+    var ctx = "[[@{/}]]";
+    var form, layedit, layer, laydate;
+
+    layui.use(['form', 'layedit', 'layer', 'laydate'], function () {
+        layedit = layui.layedit;
+        laydate = layui.laydate;
+        var layer2 = layui.layer,   //内嵌式用法
+            $ = layui.jquery,
+            form = layui.form;
+        $("#submit").click(function () {
+
+           var index1 = layer2.load(0);  //,{time: 20*1000}
+
+            $.ajax({
+                type: "POST",
+                url: ctx + 'system/osmindex/savesql',
+                data: {},
+                contentType: "application/json",
+                async: true,    //true  =  异步请求
+                // dataType: "json",
+                success: function (data, htmlData) {
+                    var res = data;
+                    if (res === "success") {
+                        layer2.close(index1);
+                        layer2.msg('插入成功!', {
+                            icon: 1,
+                            time: 1500
+                        });
+                    } else {
+                        layer2.close(index1);
+                        layer2.msg('插入失败!', {
+                            icon: 2,
+                            time: 1500
+                        });
+                    }
+                },
+                error: function (data) {
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

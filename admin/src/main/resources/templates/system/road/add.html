@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+    <div class="layui-form timo-compile">
+    <form th:action="@{/system/road/save}">
+        <input type="hidden" name="id" th:if="${road}" th:value="${road.id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">nid</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="nid" placeholder="请输入id" th:value="${road?.nid}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">可视化</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="visible" placeholder="请输入可视化" th:value="${road?.visible}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">版本</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="version" placeholder="请输入版本" th:value="${road?.version}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">可变</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="changeset" placeholder="请输入可变" th:value="${road?.changeset}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">时间</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="timestamp" placeholder="请输入时间" th:value="${road?.timestamp}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="user" placeholder="请输入用户名" th:value="${road?.user}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户id</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="uid" placeholder="请输入用户id" th:value="${road?.uid}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">key</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="tagkey" placeholder="请输入key" th:value="${road?.tagkey}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">value</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="tagvalue" placeholder="请输入value" th:value="${road?.tagvalue}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">点的id集合</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="nd" placeholder="请输入点的id集合" th:value="${road?.nd}">
+            </div>
+        </div>
+        <div class="layui-form-item timo-finally">
+            <button class="layui-btn ajax-submit"><i class="fa fa-check-circle"></i> 保存</button>
+            <button class="layui-btn btn-secondary close-popup"><i class="fa fa-times-circle"></i> 关闭</button>
+        </div>
+    </form>
+</div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>
