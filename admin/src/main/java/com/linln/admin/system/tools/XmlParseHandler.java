@@ -1,6 +1,7 @@
 package com.linln.admin.system.tools;
 
 import com.linln.admin.system.domain.Road;
+import com.linln.admin.system.domain.Tag;
 import com.linln.admin.system.domain.Way;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -26,6 +27,10 @@ public class XmlParseHandler extends DefaultHandler {
     private String Rvalue ="";
     private String Rnd ="";
 
+    //单独的tag表内数据
+    private List<Tag> tags;
+    private Tag tag;
+    private String fatherId = "";
     /**
      * 文档解析开始调用
      */
@@ -35,8 +40,8 @@ public class XmlParseHandler extends DefaultHandler {
         System.out.println("----startDocument----");
         ways = new ArrayList<Way>();
         roads = new ArrayList<Road>();
+        tags =new ArrayList<Tag>();
     }
-
     /**
      * 文档解析结束后调用
      */
@@ -77,6 +82,17 @@ public class XmlParseHandler extends DefaultHandler {
             road = null;
             currentTag = null;
         }
+        if ("relation".equals(qName)) {
+            fatherId = "";
+            currentTag = null;
+        }
+        if ("tag".equals(qName)) {
+            if (tag != null) {
+                //System.out.println(road.toString());
+                tags.add(tag);
+            }
+            tag = null;
+        }
     }
 
 
@@ -91,6 +107,17 @@ public class XmlParseHandler extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
         super.startElement(uri, localName, qName, attributes);
+
+        tag = new Tag();
+        if ("relation".equals(qName)) {
+            for (int i = 0; i < attributes.getLength(); i++) {
+                if(attributes.getQName(i).equals("id")){
+                    fatherId = attributes.getValue(i);
+                    break;
+                }
+            }
+            currentTag = qName;
+        }
         //System.out.println(qName + "-StartElement()");
         //System.out.println("uri:" + uri + "  localName:" + localName + "  qName:" + qName + "  Attributes:" + attributes.toString());
         if ("node".equals(qName)) { // 一个node节点
@@ -146,11 +173,19 @@ public class XmlParseHandler extends DefaultHandler {
           //  System.out.println("node-id = " + way.getNid());
             currentTag = "node"; // 把当前标签记录下来
         }
+        //node下的tag
         if ("node".equals(currentTag) && "tag".equals(qName)) {
-            keys = keys + attributes.getValue("k") + ';';
-            values = values + attributes.getValue("v") + ';';
+            String kk =  attributes.getValue("k");
+            String vv =  attributes.getValue("v");
+            keys = keys + kk + ';';
+            values = values + vv + ';';
             way.setTagkey(keys);
             way.setTagvalue(values);
+
+            tag.setFather("node");
+            tag.setFid(way.getNid());
+            tag.setTagkey(kk);
+            tag.setTagvalue(vv);
            // System.out.println("key = " + keys + "   value = " + values);
         }
         if ("way".equals(qName)) { // 一条road
@@ -195,16 +230,29 @@ public class XmlParseHandler extends DefaultHandler {
         }
         //解析《way》下的tag
         if ("way".equals(currentTag) && "tag".equals(qName)) {
-            Rkey = Rkey + attributes.getValue("k") + ';';
-            Rvalue = Rvalue + attributes.getValue("v") + ';';
+            String kk =  attributes.getValue("k");
+            String vv =  attributes.getValue("v");
+            Rkey = Rkey + kk + ';';
+            Rvalue = Rvalue + vv + ';';
             road.setTagkey(Rkey);
             road.setTagvalue(Rvalue);
             //System.out.println("Rkey = " + Rkey + "   Rvalue = " + Rvalue);
+            tag.setFather("way");
+            tag.setFid(road.getNid());
+            tag.setTagkey(kk);
+            tag.setTagvalue(vv);
         }
         //解析《way》下的nd
         if ("way".equals(currentTag) && "nd".equals(qName)) {
             Rnd = Rnd + attributes.getValue("ref") + ';';
             road.setNd(Rnd);
+        }
+
+        if ("relation".equals(currentTag) && "tag".equals(qName)) {
+            tag.setFather("relation");
+            tag.setFid(fatherId);
+            tag.setTagkey(attributes.getValue("k"));
+            tag.setTagvalue(attributes.getValue("v"));
         }
     }
     /**
@@ -221,5 +269,8 @@ public class XmlParseHandler extends DefaultHandler {
     }
     public List<Road>getRoads(){
         return roads;
+    }
+    public List<Tag>getTags(){
+        return tags;
     }
 }

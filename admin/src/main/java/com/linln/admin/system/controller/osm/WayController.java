@@ -1,8 +1,10 @@
 package com.linln.admin.system.controller.osm;
 import com.linln.admin.system.domain.Road;
+import com.linln.admin.system.domain.Tag;
 import com.linln.admin.system.domain.Way;
 import com.linln.admin.system.mapper.OsmMapper;
 import com.linln.admin.system.service.RoadService;
+import com.linln.admin.system.service.TagService;
 import com.linln.admin.system.service.WayService;
 import com.linln.admin.system.tools.XmlReaderHandler;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -28,6 +30,9 @@ public class WayController {
     @Autowired
     private RoadService roadService;
     @Autowired
+    private TagService tagService;
+
+    @Autowired
     private OsmMapper osmMapper;
     /**
      * 列表页面
@@ -45,8 +50,12 @@ public class WayController {
         XmlReaderHandler.setAll();
         List<Way> ways = XmlReaderHandler.getWays();
         List<Road> roads =XmlReaderHandler.getRoads();
+        List<Tag>tags  = XmlReaderHandler.getTags();
+
         osmMapper.truncateTable("osm_way");
         osmMapper.truncateTable("osm_road");
+        osmMapper.truncateTable("osm_tag");
+
         for (Way way1 : ways) {
             if (way1 != null){
                 wayService.save(way1);
@@ -56,6 +65,9 @@ public class WayController {
             if (road != null){
                 roadService.save(road);
             }
+        }
+        for(Tag tag:tags){
+            tagService.save(tag);
         }
         //System.out.println("哈哈哈");
         return "success";

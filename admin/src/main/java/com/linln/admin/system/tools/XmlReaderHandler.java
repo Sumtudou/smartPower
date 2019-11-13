@@ -1,6 +1,7 @@
 package com.linln.admin.system.tools;
 
 import com.linln.admin.system.domain.Road;
+import com.linln.admin.system.domain.Tag;
 import com.linln.admin.system.domain.Way;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,6 +17,7 @@ public class XmlReaderHandler {
 
     private static List<Way>ways;
     private static List<Road>roads;
+    private static List<Tag>tags;
     /**
      *@Description:   XML读入并解析，只有解析之后才能获取到必要的List
      * @author Sumtudou
@@ -36,11 +38,16 @@ public class XmlReaderHandler {
         input.close();
         ways = handler.getWays();
         roads = handler.getRoads();
+        tags  =handler.getTags();
+
     }
     public static List<Way>getWays(){
         return ways;
     }
     public static List<Road>getRoads(){
         return roads;
+    }
+    public static List<Tag>getTags(){
+        return tags;
     }
 }
