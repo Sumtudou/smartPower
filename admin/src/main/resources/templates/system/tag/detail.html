@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+    <div class="timo-detail-page">
+        <div class="timo-detail-title">基本信息</div>
+        <table class="layui-table timo-detail-table">
+            <colgroup>
+                <col width="100px"><col>
+                <col width="100px"><col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>主键ID</th>
+                    <td th:text="${tag.id}"></td>
+                    <th>key</th>
+                    <td th:text="${tag.tagkey}"></td>
+                </tr>
+                <tr>
+                    <th>value</th>
+                    <td th:text="${tag.tagvalue}"></td>
+                    <th>父节点</th>
+                    <td th:text="${tag.father}"></td>
+                </tr>
+                <tr>
+                    <th>父节点id</th>
+                    <td th:text="${tag.fid}" colspan="3"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>

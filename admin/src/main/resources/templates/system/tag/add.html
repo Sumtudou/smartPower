@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+    <div class="layui-form timo-compile">
+    <form th:action="@{/system/tag/save}">
+        <input type="hidden" name="id" th:if="${tag}" th:value="${tag.id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">key</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="tagkey" placeholder="请输入key" th:value="${tag?.tagkey}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">key</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="tagvalue" placeholder="请输入value" th:value="${tag?.tagvalue}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">父节点</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="father" placeholder="请输入父节点" th:value="${tag?.father}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">父节点id</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="fid" placeholder="请输入父节点id" th:value="${tag?.fid}">
+            </div>
+        </div>
+        <div class="layui-form-item timo-finally">
+            <button class="layui-btn ajax-submit"><i class="fa fa-check-circle"></i> 保存</button>
+            <button class="layui-btn btn-secondary close-popup"><i class="fa fa-times-circle"></i> 关闭</button>
+        </div>
+    </form>
+</div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>

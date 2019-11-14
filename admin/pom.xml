@@ -31,11 +31,11 @@
             <artifactId>system</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.linln.modules</groupId>
-            <artifactId>tag</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.linln.modules</groupId>-->
+<!--            <artifactId>tag</artifactId>-->
+<!--            <version>${project.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.linln.component</groupId>
             <artifactId>shiro</artifactId>
