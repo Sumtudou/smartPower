@@ -6,6 +6,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,6 +14,8 @@ import java.util.List;
  * @date 2019/11/13
  */
 public interface TagService {
+
+    ArrayList<Tag> getAllTags();
 
     /**
      * 获取分页列表数据

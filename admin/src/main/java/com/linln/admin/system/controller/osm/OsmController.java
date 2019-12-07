@@ -1,11 +1,10 @@
 package com.linln.admin.system.controller.osm;
-import com.linln.admin.system.domain.Road;
-import com.linln.admin.system.domain.Tag;
-import com.linln.admin.system.domain.Way;
+import com.linln.admin.system.domain.*;
 import com.linln.admin.system.mapper.OsmMapper;
 import com.linln.admin.system.service.RoadService;
 import com.linln.admin.system.service.TagService;
 import com.linln.admin.system.service.WayService;
+import com.linln.admin.system.tools.CalculateRes;
 import com.linln.admin.system.tools.XmlReaderHandler;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
+
+import static java.util.Collections.sort;
 
 /**
  * @author sumtdou
@@ -23,7 +24,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/system/osmindex")
-public class WayController {
+public class OsmController {
 
     @Autowired
     private WayService wayService;
@@ -43,6 +44,30 @@ public class WayController {
         return "/system/osmindex/index";
     }
 
+    @GetMapping("/detail")
+    @RequiresPermissions("system:osmindex:index")
+    public String detail(Model model , @RequestParam("MinSupport") Double MinSupport,
+                         @RequestParam("MinConfidence") Double MinConfidence) {
+
+        System.out.println(MinSupport+"  ggg  "+MinConfidence);
+
+        List<TagSon> tagsons = CalculateRes.solve();
+        sort(tagsons,new SortBySupport());
+        List<TagSon>  ggg = new ArrayList<>();
+
+        int sum = 0;
+        for(TagSon item:tagsons){
+
+            if(item.getSupport()>MinSupport && item.getConfidence()>MinConfidence){
+                ggg.add(item);
+                sum++;
+            }
+            if(sum>14) break;
+        }
+        model.addAttribute("tagsons",ggg);
+        return "/system/osmindex/detail";
+    }
+
     @PostMapping("/savesql")
     @RequiresPermissions("system:osmindex:savesql")
     @ResponseBody
@@ -56,12 +81,12 @@ public class WayController {
         osmMapper.truncateTable("osm_road");
         osmMapper.truncateTable("osm_tag");
 
-        for (Way way1 : ways) {
+        for (Way way1 : ways) {   //node
             if (way1 != null){
                 wayService.save(way1);
             }
         }
-        for (Road road : roads) {
+        for (Road road : roads) {  //way
             if (road != null){
                 roadService.save(road);
             }
@@ -69,7 +94,25 @@ public class WayController {
         for(Tag tag:tags){
             tagService.save(tag);
         }
-        //System.out.println("哈哈哈");
         return "success";
+    }
+}
+class SortBySupport implements Comparator {
+    public int compare(Object o1, Object o2) {
+        TagSon ts1 = (TagSon) o1;
+        TagSon ts2 = (TagSon) o2;
+        Integer times1 = ts1.getTimes();
+        Integer times2 = ts2.getTimes();
+        return times1.compareTo(times2)*(-1);
+    }
+}
+
+class SortByConfidence implements Comparator {
+    public int compare(Object o1, Object o2) {
+        TagSon ts1 = (TagSon) o1;
+        TagSon ts2 = (TagSon) o2;
+        Double times1 = ts1.getConfidence();
+        Double times2 = ts2.getConfidence();
+        return times1.compareTo(times2)*(-1);
     }
 }

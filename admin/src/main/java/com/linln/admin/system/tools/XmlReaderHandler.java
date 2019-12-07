@@ -7,10 +7,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 
 public class XmlReaderHandler {
@@ -25,7 +22,7 @@ public class XmlReaderHandler {
     */
     public static  void setAll() throws ParserConfigurationException, SAXException, IOException {
         // 加载文件返回文件的输入流
-        File f = new File("C://Users//11630//Desktop//XTU.xml");    // 声明File对象
+        File f = new File("C://Users//11630//Desktop//map.xml");    // 声明File对象
         InputStream input = new FileInputStream(f);
 
         XmlParseHandler handler = new XmlParseHandler();
@@ -50,4 +47,19 @@ public class XmlReaderHandler {
     public static List<Tag>getTags(){
         return tags;
     }
+
+
+  /*  public static InputStream changeToUTF8(InputStream input) throws IOException {
+
+        StringBuffer content = new StringBuffer();
+        DataInputStream in = new DataInputStream(input);
+        BufferedReader d = new BufferedReader(new InputStreamReader(in, "UTF-8"));// , "UTF-8"
+        String line = null;
+        while ((line = d.readLine()) != null)
+            content.append(line);
+        d.close();
+        in.close();
+        input.close();
+
+    }*/
 }

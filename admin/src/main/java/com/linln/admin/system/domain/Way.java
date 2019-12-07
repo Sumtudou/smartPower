@@ -21,7 +21,7 @@ import javax.persistence.Table;
  */
 @Data
 @Entity
-@Table(name="osm_way")
+@Table(name="osm_way")   //这个是node表，之前打错了
 @EntityListeners(AuditingEntityListener.class)
 @Where(clause = StatusUtil.NOT_DELETE)
 public class Way implements Serializable {

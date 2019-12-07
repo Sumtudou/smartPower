@@ -2,8 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:mo="https://gitee.com/aun/Timo">
 <head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
-    <script type="text/javascript" src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/static/layer/layer.js"></script>
     <link href="https://sumtudou.oss-cn-shanghai.aliyuncs.com/static/layer/mobile/need/layer.css" rel="stylesheet">
+    <style>
+        .in-a-line {
+            display: inline-block;
+        }
+
+    </style>
+
 </head>
 <body class="timo-layout-page">
 <div class="layui-card">
@@ -14,17 +20,123 @@
     <div class="layui-card-body">
         <div style="min-height: 200px">
 
-                <div id="buttons" style="margin-left: 40%;margin-top: 30px;">
-                    <a href="#" class="layui-btn">选择文件</a>
-                    <button type="button" id="submit" class="layui-btn"> 插入数据库</button>
-                </div>
+            <div id="buttons" style="margin-left: 40%;margin-top: 30px;">
+                <a href="#" class="layui-btn">选择文件</a>
+                <button type="button" id="submit" class="layui-btn"> 插入数据库</button>
+            </div>
+
+            <div style="margin-top: 20px; margin-left: 20%">
+
+                <p class="in-a-line">最小支持度：</p> <input id="MinSupport" type="text" style="width: 20%" name="title"
+                                                       required lay-verify="required" placeholder="请输入小数"
+                                                       autocomplete="off" class="layui-input in-a-line"
+                                                       oninput="value=value.replace(/[^\d.]/g,'')">
+                <p class="in-a-line">最小置信度：</p> <input id="MinConfidence" type="text" style="width: 20%" name="title"
+                                                       required lay-verify="required" placeholder="请输入小数"
+                                                       autocomplete="off" class="layui-input in-a-line"
+                                                       oninput="value=value.replace(/[^\d.]/g,'')">
+
+                <a style="margin-left: 15px;" id="btn-sub" class="open-popup1 layui-btn layui-btn-normal"
+                   data-title="详细信息"
+                   data-size="800,600" href="#" onclick="ggg()">完成数据挖掘</a>
+            </div>
 
         </div>
+
     </div>
+</div>
 </div>
 
 <script th:replace="/common/template :: script"></script>
+<script th:src="@{/js/plugins/jquery-3.3.1.min.js}" charset="utf-8"></script>
+<script type="text/javascript" src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/static/layer/layer.js"></script>
 
+<!--<script src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/plugins/jquery-3.3.1.min.js"></script>-->
+<script>
+    function ggg() {
+        var MinC = $("#MinConfidence").val();
+        var MinS = $("#MinSupport").val();
+
+        console.log(MinC + "gdd" + MinS);
+        if (limit(MinC) && limit(MinS)) {
+            console.log("gggg");
+            var url = "/system/osmindex/detail" + '?MinSupport=' + MinS + '&MinConfidence=' + MinC;
+            console.log(MinC + "  " + MinS);
+            console.log(url);
+            $("#btn-sub").attr("data-url", url);
+
+        } else {
+            $("#btn-sub").attr("data-url", "ggg");
+
+            layer.msg("数值不能小于零或大于一", {time: 1000, icon: 7});
+            return false;
+        }
+
+
+    }
+
+    function limit(value) {
+
+        var num = Number(value);
+
+        console.log("数字：" + num);
+
+        if (num < 0 || num > 1) {
+            return false;
+        }
+        return true;
+    }
+</script>
+
+<SCRIPT>
+
+    /* 添加/修改弹出层 */
+    $(document).on("click", ".open-popup1, .open-popup-param", function () {
+        var title = $(this).data("title");
+        var url = $(this).attr("data-url");
+
+        console.log("弹出前："+url);
+
+        if (url != "ggg") {
+
+            if ($(this).hasClass("open-popup-param")) {
+                var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
+                var param = '';
+                if (tdcheckbox.length === 0) {
+                    layer.msg('请选择一条记录');
+                    return;
+                }
+                if (tdcheckbox.length > 1 && $(this).data("type") === 'radio') {
+                    layer.msg('只允许选中一个');
+                    return;
+                }
+                tdcheckbox.each(function (key, val) {
+                    param += "ids=" + $(val).attr("value") + "&";
+                });
+                param = param.substr(0, param.length - 1);
+                url += "?" + param;
+            }
+            var size = $(this).attr("data-size");
+            if (size === undefined || size === "auto") {
+                size = ['50%', '80%'];
+            } else if (size === "max") {
+                size = ['100%', '100%'];
+            } else if (size.indexOf(',') !== -1) {
+                var split = size.split(",");
+                size = [split[0] + 'px', split[1] + 'px'];
+            }
+            window.layerIndex = layer.open({
+                type: 2,
+                title: title,
+                shadeClose: true,
+                maxmin: true,
+                area: size,
+                content: [url, 'on']
+            });
+        }
+    });
+
+</SCRIPT>
 
 <script>
     var ctx = "[[@{/}]]";
@@ -38,7 +150,7 @@
             form = layui.form;
         $("#submit").click(function () {
 
-           var index1 = layer2.load(0);  //,{time: 20*1000}
+            var index1 = layer2.load(0);  //,{time: 20*1000}
 
             $.ajax({
                 type: "POST",

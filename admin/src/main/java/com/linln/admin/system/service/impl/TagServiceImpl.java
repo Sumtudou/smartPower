@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -63,4 +65,9 @@ public class TagServiceImpl implements TagService {
     public Boolean updateStatus(StatusEnum statusEnum, List<Long> idList) {
         return tagRepository.updateStatus(statusEnum.getCode(), idList) > 0;
     }
+
+    public ArrayList<Tag> getAllTags(){
+        return tagRepository.getAllTags();
+    }
+
 }

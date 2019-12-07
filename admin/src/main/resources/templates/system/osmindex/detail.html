@@ -4,43 +4,31 @@
 </head>
 <body>
     <div class="timo-detail-page">
-        <div class="timo-detail-title">基本信息</div>
+
+        <div class="timo-detail-title">相关度分析</div>
         <table class="layui-table timo-detail-table">
             <colgroup>
-                <col width="100px"><col>
-                <col width="100px"><col>
+                <col width="100">
+                <col width="100">
+                <col>
             </colgroup>
+            <thead>
+            <tr>
+                <th>tag</th>
+                <th>value</th>
+                <th>次数</th>
+                <th>支持度</th>
+                <th>置信度</th>
+            </tr>
+            </thead>
             <tbody>
-                <tr>
-                    <th>主键ID</th>
-                    <td th:text="${way.id}"></td>
-                    <th>nid</th>
-                    <td th:text="${way.nid}"></td>
-                </tr>
-                <tr>
-                    <th>可视化</th>
-                    <td th:text="${way.visible}"></td>
-                    <th>版本</th>
-                    <td th:text="${way.version}"></td>
-                </tr>
-                <tr>
-                    <th>改变</th>
-                    <td th:text="${way.changeset}"></td>
-                    <th>时间</th>
-                    <td th:text="${way.timestamp}"></td>
-                </tr>
-                <tr>
-                    <th>使用者名字</th>
-                    <td th:text="${way.user}"></td>
-                    <th>用户id</th>
-                    <td th:text="${way.uid}"></td>
-                </tr>
-                <tr>
-                    <th>纬度</th>
-                    <td th:text="${way.lat}"></td>
-                    <th>经度</th>
-                    <td th:text="${way.lon}"></td>
-                </tr>
+            <tr th:each="info,infoStat : ${tagsons}">
+                <td th:text="${info.key}"></td>
+                <td th:text="${info.value}"></td>
+                <td th:text="${info.times}"></td>
+                <td th:text="${#numbers.formatDecimal(info.support,1,'COMMA',2,'POINT')}*100+'%'"></td>
+                <td th:text="${#numbers.formatDecimal(info.confidence,1,'COMMA',2,'POINT')}*100+'%'"></td>
+            </tr>
             </tbody>
         </table>
     </div>
