@@ -3,7 +3,7 @@ import com.linln.admin.system.domain.*;
 import com.linln.admin.system.mapper.OsmMapper;
 import com.linln.admin.system.service.RoadService;
 import com.linln.admin.system.service.TagService;
-import com.linln.admin.system.service.WayService;
+import com.linln.admin.system.service.NodeService;
 import com.linln.admin.system.tools.CalculateRes;
 import com.linln.admin.system.tools.XmlReaderHandler;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -27,7 +27,7 @@ import static java.util.Collections.sort;
 public class OsmController {
 
     @Autowired
-    private WayService wayService;
+    private NodeService nodeService;
     @Autowired
     private RoadService roadService;
     @Autowired
@@ -40,7 +40,7 @@ public class OsmController {
      */
     @GetMapping("/index")
     @RequiresPermissions("system:osmindex:index")
-    public String index(Model model, Way way) {
+    public String index(Model model, Node node) {
         return "/system/osmindex/index";
     }
 
@@ -57,7 +57,6 @@ public class OsmController {
 
         int sum = 0;
         for(TagSon item:tagsons){
-
             if(item.getSupport()>MinSupport && item.getConfidence()>MinConfidence){
                 ggg.add(item);
                 sum++;
@@ -73,17 +72,17 @@ public class OsmController {
     @ResponseBody
     public String SaveSql() throws IOException, SAXException, ParserConfigurationException {
         XmlReaderHandler.setAll();
-        List<Way> ways = XmlReaderHandler.getWays();
+        List<Node> nodes = XmlReaderHandler.getNodes();
         List<Road> roads =XmlReaderHandler.getRoads();
         List<Tag>tags  = XmlReaderHandler.getTags();
 
-        osmMapper.truncateTable("osm_way");
+        osmMapper.truncateTable("osm_node");
         osmMapper.truncateTable("osm_road");
         osmMapper.truncateTable("osm_tag");
 
-        for (Way way1 : ways) {   //node
-            if (way1 != null){
-                wayService.save(way1);
+        for (Node node1 : nodes) {   //node
+            if (node1 != null){
+                nodeService.save(node1);
             }
         }
         for (Road road : roads) {  //way

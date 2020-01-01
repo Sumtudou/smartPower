@@ -2,7 +2,7 @@ package com.linln.admin.system.tools;
 
 import com.linln.admin.system.domain.Road;
 import com.linln.admin.system.domain.Tag;
-import com.linln.admin.system.domain.Way;
+import com.linln.admin.system.domain.Node;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -12,7 +12,7 @@ import java.util.List;
 
 public class XmlReaderHandler {
 
-    private static List<Way>ways;
+    private static List<Node>nodes;
     private static List<Road>roads;
     private static List<Tag>tags;
     /**
@@ -33,13 +33,13 @@ public class XmlReaderHandler {
         // 3. 传入输入流和handler，解析
         newSAXParser.parse(input, handler);
         input.close();
-        ways = handler.getWays();
+        nodes = handler.getWays();
         roads = handler.getRoads();
         tags  =handler.getTags();
 
     }
-    public static List<Way>getWays(){
-        return ways;
+    public static List<Node>getNodes(){
+        return nodes;
     }
     public static List<Road>getRoads(){
         return roads;

@@ -21,10 +21,10 @@ import javax.persistence.Table;
  */
 @Data
 @Entity
-@Table(name="osm_way")   //这个是node表，之前打错了
+@Table(name="osm_node")   //这个是node表，之前打错了
 @EntityListeners(AuditingEntityListener.class)
 @Where(clause = StatusUtil.NOT_DELETE)
-public class Way implements Serializable {
+public class Node implements Serializable {
     // 主键ID
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

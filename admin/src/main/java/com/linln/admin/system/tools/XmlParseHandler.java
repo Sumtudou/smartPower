@@ -2,7 +2,7 @@ package com.linln.admin.system.tools;
 
 import com.linln.admin.system.domain.Road;
 import com.linln.admin.system.domain.Tag;
-import com.linln.admin.system.domain.Way;
+import com.linln.admin.system.domain.Node;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +14,10 @@ import org.xml.sax.helpers.DefaultHandler;
 //https://blog.csdn.net/scy411082514/article/details/7484497  osm数据结构
 public class XmlParseHandler extends DefaultHandler {
 
-    private List<Way> ways;  //node的集合……前期打错了字，就一错到此了
+    private List<Node> nodes;  //node的集合
     private List<Road>roads;  // way的集合
     private String currentTag; // 记录当前解析到的节点名称
-    private Way way; // 记录当前的node
+    private Node node; // 记录当前的node
     private Road road;   //记录当前的way
     //记录node下tag的k，v
     private String keys = "";
@@ -38,7 +38,7 @@ public class XmlParseHandler extends DefaultHandler {
     public void startDocument() throws SAXException {
         super.startDocument();
         System.out.println("----startDocument----");
-        ways = new ArrayList<Way>();
+        nodes = new ArrayList<Node>();
         roads = new ArrayList<Road>();
         tags =new ArrayList<Tag>();
     }
@@ -63,12 +63,12 @@ public class XmlParseHandler extends DefaultHandler {
         super.endElement(uri, localName, qName);
         //System.out.println(qName + "-endElement()");
         if ("node".equals(qName)) {
-            if (way != null) {
-                ways.add(way);
+            if (node != null) {
+                nodes.add(node);
             }
             keys = "";
             values ="";
-            way = null;
+            node = null;
             currentTag = null;
         }
         if ("way".equals(qName)) {
@@ -95,7 +95,6 @@ public class XmlParseHandler extends DefaultHandler {
         }
     }
 
-
     /**
      * 节点解析开始调用
      *
@@ -121,7 +120,7 @@ public class XmlParseHandler extends DefaultHandler {
         //System.out.println(qName + "-StartElement()");
         //System.out.println("uri:" + uri + "  localName:" + localName + "  qName:" + qName + "  Attributes:" + attributes.toString());
         if ("node".equals(qName)) { // 一个node节点
-            way = new Way();
+            node = new Node();
             for (int i = 0; i < attributes.getLength(); i++) {
                 /**********************/
                 /*int length = attributes.getQName(i).length();
@@ -134,37 +133,37 @@ public class XmlParseHandler extends DefaultHandler {
 
                 switch (name) {
                     case "id":
-                        if (!value.equals("")) way.setNid(value);
+                        if (!value.equals("")) node.setNid(value);
                         break;
                     case "visible":
-                        if (!value.equals("")) way.setVisible(value);
+                        if (!value.equals("")) node.setVisible(value);
                         break;
                     case "version":
-                        if (!value.equals("")) way.setVersion(Integer.valueOf(value));
+                        if (!value.equals("")) node.setVersion(Integer.valueOf(value));
                         break;
                     case "changeset":
-                        if (!value.equals("")) way.setChangeset(value);
+                        if (!value.equals("")) node.setChangeset(value);
                         break;
                     case "timestamp":
                         if (!value.equals("")) {
                             try {
-                                way.setTimestamp(TimeUtils.StampToDate(value));
+                                node.setTimestamp(TimeUtils.StampToDate(value));
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
                         }
                         break;
                     case "user":
-                        if (!value.equals("")) way.setUser(value);
+                        if (!value.equals("")) node.setUser(value);
                         break;
                     case "uid":
-                        if (!value.equals("")) way.setUid(Integer.valueOf(value));
+                        if (!value.equals("")) node.setUid(Integer.valueOf(value));
                         break;
                     case "lat":
-                        if (!value.equals("")) way.setLat(value);
+                        if (!value.equals("")) node.setLat(value);
                         break;
                     case "lon":
-                        if (!value.equals("")) way.setLon(value);
+                        if (!value.equals("")) node.setLon(value);
                         break;
                     default:
                         break;
@@ -179,11 +178,11 @@ public class XmlParseHandler extends DefaultHandler {
             String vv =  attributes.getValue("v");
             keys = keys + kk + ';';
             values = values + vv + ';';
-            way.setTagkey(keys);
-            way.setTagvalue(values);
+            node.setTagkey(keys);
+            node.setTagvalue(values);
 
             tag.setFather("node");
-            tag.setFid(way.getNid());
+            tag.setFid(node.getNid());
             tag.setTagkey(kk);
             tag.setTagvalue(vv);
            // System.out.println("key = " + keys + "   value = " + values);
@@ -256,7 +255,7 @@ public class XmlParseHandler extends DefaultHandler {
         }
     }
     /**
-     *@Description:  作用是解析闭合标签，如<name>Sumtudou<name/>,得到里面的Sumtudou
+     *@Description:  作用是解析闭合标签，如<name>Sumtudou</name>,得到里面的Sumtudou
      * @author Sumtudou
      * @date 2019/11/5
     */
@@ -264,13 +263,14 @@ public class XmlParseHandler extends DefaultHandler {
     public void characters(char[] ch, int start, int length) throws SAXException {
         super.characters(ch, start, length);
     }
-    public List<Way> getWays() {
-        return ways;
+
+    protected List<Node> getWays() {
+        return nodes;
     }
-    public List<Road>getRoads(){
+    protected List<Road>getRoads(){
         return roads;
     }
-    public List<Tag>getTags(){
+    protected List<Tag>getTags(){
         return tags;
     }
 }

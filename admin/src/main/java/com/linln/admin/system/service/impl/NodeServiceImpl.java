@@ -1,8 +1,8 @@
 package com.linln.admin.system.service.impl;
 
-import com.linln.admin.system.domain.Way;
-import com.linln.admin.system.repository.WayRepository;
-import com.linln.admin.system.service.WayService;
+import com.linln.admin.system.domain.Node;
+import com.linln.admin.system.repository.NodeRepository;
+import com.linln.admin.system.service.NodeService;
 import com.linln.common.data.PageSort;
 import com.linln.common.enums.StatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,10 @@ import java.util.List;
  * @date 2019/11/02
  */
 @Service
-public class WayServiceImpl implements WayService {
+public class NodeServiceImpl implements NodeService {
 
     @Autowired
-    private WayRepository wayRepository;
+    private NodeRepository nodeRepository;
 
     /**
      * 根据ID查询数据
@@ -30,8 +30,8 @@ public class WayServiceImpl implements WayService {
      */
     @Override
     @Transactional
-    public Way getById(Long id) {
-        return wayRepository.findById(id).orElse(null);
+    public Node getById(Long id) {
+        return nodeRepository.findById(id).orElse(null);
     }
 
     /**
@@ -40,19 +40,19 @@ public class WayServiceImpl implements WayService {
      * @return 返回分页数据
      */
     @Override
-    public Page<Way> getPageList(Example<Way> example) {
+    public Page<Node> getPageList(Example<Node> example) {
         // 创建分页对象
         PageRequest page = PageSort.pageRequest();
-        return wayRepository.findAll(example, page);
+        return nodeRepository.findAll(example, page);
     }
 
     /**
      * 保存数据
-     * @param way 实体对象
+     * @param node 实体对象
      */
     @Override
-    public Way save(Way way) {
-        return wayRepository.save(way);
+    public Node save(Node node) {
+        return nodeRepository.save(node);
     }
 
     /**
@@ -61,6 +61,6 @@ public class WayServiceImpl implements WayService {
     @Override
     @Transactional
     public Boolean updateStatus(StatusEnum statusEnum, List<Long> idList) {
-        return wayRepository.updateStatus(statusEnum.getCode(), idList) > 0;
+        return nodeRepository.updateStatus(statusEnum.getCode(), idList) > 0;
     }
 }
