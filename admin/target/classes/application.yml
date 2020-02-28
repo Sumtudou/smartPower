@@ -1,6 +1,6 @@
 ### 服务器配置
 server:
-  port: 8082
+  port: 8083
 
 ### TIMO配置
 project:
@@ -17,7 +17,7 @@ spring:
 ## 数据库配置
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/osm?useSSL=false&characterEncoding=utf-8
+    url: jdbc:mysql://127.0.0.1:3306/osm?useSSL=false
     username: root
     password: 123456
 

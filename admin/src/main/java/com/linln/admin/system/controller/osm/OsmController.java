@@ -80,6 +80,18 @@ public class OsmController {
         osmMapper.truncateTable("osm_road");
         osmMapper.truncateTable("osm_tag");
 
+//        String str = "任意字符串";
+//        str = new String(str.getBytes("gbk"),"utf-8");
+
+//        for(Tag tag:tags){
+//            tag.setTagvalue(new String(tag.getTagvalue().getBytes("gbk"),"utf-8"));
+//            tag.setTagkey(new String(tag.getTagkey().getBytes("gbk"),"utf-8"));
+//        }
+
+        for(Tag tag:tags){
+            tagService.save(tag);
+        }
+        System.out.println("Tag save over");
         for (Node node1 : nodes) {   //node
             if (node1 != null){
                 nodeService.save(node1);
@@ -90,9 +102,7 @@ public class OsmController {
                 roadService.save(road);
             }
         }
-        for(Tag tag:tags){
-            tagService.save(tag);
-        }
+
         return "success";
     }
 }
