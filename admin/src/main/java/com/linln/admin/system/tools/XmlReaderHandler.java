@@ -22,7 +22,7 @@ public class XmlReaderHandler {
     */
     public static  void setAll() throws ParserConfigurationException, SAXException, IOException {
         // 加载文件返回文件的输入流
-        File f = new File("C://Users//11630//Desktop//map.osm");    // 声明File对象
+        File f = new File("C://Users//11630//Desktop//beijing_01.osm");    // 声明File对象
         InputStream input = new FileInputStream(f);
 
         XmlParseHandler handler = new XmlParseHandler();

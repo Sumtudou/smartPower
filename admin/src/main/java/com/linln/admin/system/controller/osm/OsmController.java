@@ -5,6 +5,7 @@ import com.linln.admin.system.service.RoadService;
 import com.linln.admin.system.service.TagService;
 import com.linln.admin.system.service.NodeService;
 import com.linln.admin.system.tools.CalculateRes;
+import com.linln.admin.system.tools.ToolsUtils;
 import com.linln.admin.system.tools.XmlReaderHandler;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+
+//import com.github.binarywang.java.emoji.EmojiConverter;
 
 import static java.util.Collections.sort;
 
@@ -25,6 +29,8 @@ import static java.util.Collections.sort;
 @Controller
 @RequestMapping("/system/osmindex")
 public class OsmController {
+
+    //private EmojiConverter emojiConverter = EmojiConverter.getInstance();
 
     @Autowired
     private NodeService nodeService;
@@ -80,28 +86,20 @@ public class OsmController {
         osmMapper.truncateTable("osm_road");
         osmMapper.truncateTable("osm_tag");
 
-//        String str = "任意字符串";
-//        str = new String(str.getBytes("gbk"),"utf-8");
 
-//        for(Tag tag:tags){
-//            tag.setTagvalue(new String(tag.getTagvalue().getBytes("gbk"),"utf-8"));
-//            tag.setTagkey(new String(tag.getTagkey().getBytes("gbk"),"utf-8"));
-//        }
+        CountDownLatch countDownLatch = new CountDownLatch(3);
+        Thread thread = new Thread(new ThreadForSaveTag(countDownLatch,tags,tagService));
+        thread.start();
+        countDownLatch.countDown();
 
-        for(Tag tag:tags){
-            tagService.save(tag);
-        }
-        System.out.println("Tag save over");
-        for (Node node1 : nodes) {   //node
-            if (node1 != null){
-                nodeService.save(node1);
-            }
-        }
-        for (Road road : roads) {  //way
-            if (road != null){
-                roadService.save(road);
-            }
-        }
+        Thread thread1 = new Thread(new ThreadForSaveNode(countDownLatch,nodes,nodeService));
+        thread1.start();
+        countDownLatch.countDown();
+
+        Thread thread2 = new Thread(new ThreadForSaveRoad(countDownLatch,roads,roadService));
+        thread2.start();
+        countDownLatch.countDown();
+
 
         return "success";
     }
@@ -123,5 +121,105 @@ class SortByConfidence implements Comparator {
         Double times1 = ts1.getConfidence();
         Double times2 = ts2.getConfidence();
         return times1.compareTo(times2)*(-1);
+    }
+}
+
+
+class ThreadForSaveTag implements Runnable {
+
+    private final CountDownLatch countDownLatch;
+    private List<Tag>tags;
+    private TagService tagService;
+
+    public ThreadForSaveTag(CountDownLatch countDownLatch ,List<Tag>tags,TagService tagService) {
+        this.countDownLatch = countDownLatch;
+        this.tags = tags;
+        this.tagService  = tagService;
+    }
+    @Override
+    public void run() {
+        try {
+            for(Tag tag:tags){
+                if(ToolsUtils.containsEmoji(tag.getTagvalue())){
+                    tag.setTagvalue("emoji");
+                }
+            }
+            for(Tag tag:tags){
+                tagService.save(tag);
+            }
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class ThreadForSaveNode implements Runnable {
+
+    private final CountDownLatch countDownLatch;
+    private List<Node>nodes;
+    private NodeService nodeService;
+
+    public ThreadForSaveNode(CountDownLatch countDownLatch ,List<Node>nodes,NodeService nodeService) {
+        this.countDownLatch = countDownLatch;
+        this.nodes = nodes;
+        this.nodeService  = nodeService;
+    }
+    @Override
+    public void run() {
+        try {
+            for (Node node1 : nodes) {   //node
+                if(ToolsUtils.containsEmoji(node1.getUser())){
+                    node1.setUser("emoji");
+                }
+                if(ToolsUtils.containsEmoji(node1.getTagvalue())){
+                    node1.setTagvalue("emoji");
+                }
+            }
+        for (Node node1 : nodes) {   //node
+            if (node1 != null){
+                nodeService.save(node1);
+            }
+        }
+
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+class ThreadForSaveRoad implements Runnable {
+
+    private final CountDownLatch countDownLatch;
+    private List<Road>roads;
+    private RoadService roadService;
+
+    public ThreadForSaveRoad(CountDownLatch countDownLatch ,List<Road>roads,RoadService roadService) {
+        this.countDownLatch = countDownLatch;
+        this.roads = roads;
+        this.roadService  = roadService;
+    }
+    @Override
+    public void run() {
+        try {
+            for (Road road : roads) {  //way
+                if(ToolsUtils.containsEmoji(road.getUser())){
+                    road.setUser("emoji");
+                }
+                if(ToolsUtils.containsEmoji(road.getTagvalue())){
+                    road.setTagvalue("emoji");
+                }
+            }
+            for (Road road : roads) {  //way
+                if (road != null) {
+                    roadService.save(road);
+                }
+            }
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
