@@ -3,9 +3,12 @@ package com.linln.admin.system.tools;
 import com.linln.admin.system.domain.Road;
 import com.linln.admin.system.domain.Tag;
 import com.linln.admin.system.domain.Node;
+import com.linln.admin.system.domain.Relation;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -15,22 +18,30 @@ import org.xml.sax.helpers.DefaultHandler;
 public class XmlParseHandler extends DefaultHandler {
 
     private List<Node> nodes;  //node的集合
-    private List<Road>roads;  // way的集合
+    private List<Road> roads;  // way的集合
+    private List<Relation> relations; //relation的集合
     private String currentTag; // 记录当前解析到的节点名称
     private Node node; // 记录当前的node
     private Road road;   //记录当前的way
+    private Relation relation;   //记录当前的relation
+
     //记录node下tag的k，v
     private String keys = "";
     private String values = "";
     //记录way下tag的k，v以及nd
     private String Rkey = "";
-    private String Rvalue ="";
-    private String Rnd ="";
+    private String Rvalue = "";
+    private String Rnd = "";
+
+    //记录relation下tag的k，v
+    private String ReKey = "";
+    private String ReValue = "";
 
     //单独的tag表内数据
     private List<Tag> tags;
     private Tag tag;
     private String fatherId = "";
+
     /**
      * 文档解析开始调用
      */
@@ -40,8 +51,10 @@ public class XmlParseHandler extends DefaultHandler {
         System.out.println("----startDocument----");
         nodes = new ArrayList<Node>();
         roads = new ArrayList<Road>();
-        tags =new ArrayList<Tag>();
+        tags = new ArrayList<Tag>();
+        relations = new ArrayList<Relation>();
     }
+
     /**
      * 文档解析结束后调用
      */
@@ -67,7 +80,7 @@ public class XmlParseHandler extends DefaultHandler {
                 nodes.add(node);
             }
             keys = "";
-            values ="";
+            values = "";
             node = null;
             currentTag = null;
         }
@@ -77,12 +90,19 @@ public class XmlParseHandler extends DefaultHandler {
                 roads.add(road);
             }
             Rkey = "";
-            Rvalue ="";
+            Rvalue = "";
             Rnd = "";
             road = null;
             currentTag = null;
         }
         if ("relation".equals(qName)) {
+            if (relation != null) {
+                relations.add(relation);
+            }
+
+            ReKey = null;
+            ReValue = null;
+            relation = null;
             fatherId = "";
             currentTag = null;
         }
@@ -109,9 +129,15 @@ public class XmlParseHandler extends DefaultHandler {
 
         tag = new Tag();
         if ("relation".equals(qName)) {
+            relation = new Relation();
+
             for (int i = 0; i < attributes.getLength(); i++) {
-                if(attributes.getQName(i).equals("id")){
+                if (attributes.getQName(i).equals("id")) {
                     fatherId = attributes.getValue(i);
+
+                    //System.out.println("fatherId:"+fatherId);;
+                    relation.setNid(fatherId);
+
                     break;
                 }
             }
@@ -169,13 +195,13 @@ public class XmlParseHandler extends DefaultHandler {
                         break;
                 }
             }
-          //  System.out.println("node-id = " + way.getNid());
+            //  System.out.println("node-id = " + way.getNid());
             currentTag = "node"; // 把当前标签记录下来
         }
         //node下的tag
         if ("node".equals(currentTag) && "tag".equals(qName)) {
-            String kk =  attributes.getValue("k");
-            String vv =  attributes.getValue("v");
+            String kk = attributes.getValue("k");
+            String vv = attributes.getValue("v");
             keys = keys + kk + ';';
             values = values + vv + ';';
             node.setTagkey(keys);
@@ -185,7 +211,7 @@ public class XmlParseHandler extends DefaultHandler {
             tag.setFid(node.getNid());
             tag.setTagkey(kk);
             tag.setTagvalue(vv);
-           // System.out.println("key = " + keys + "   value = " + values);
+            // System.out.println("key = " + keys + "   value = " + values);
         }
         if ("way".equals(qName)) { // 一条road
             road = new Road();
@@ -229,8 +255,8 @@ public class XmlParseHandler extends DefaultHandler {
         }
         //解析《way》下的tag
         if ("way".equals(currentTag) && "tag".equals(qName)) {
-            String kk =  attributes.getValue("k");
-            String vv =  attributes.getValue("v");
+            String kk = attributes.getValue("k");
+            String vv = attributes.getValue("v");
             Rkey = Rkey + kk + ';';
             Rvalue = Rvalue + vv + ';';
             road.setTagkey(Rkey);
@@ -248,17 +274,26 @@ public class XmlParseHandler extends DefaultHandler {
         }
 
         if ("relation".equals(currentTag) && "tag".equals(qName)) {
+            String kk = attributes.getValue("k");
+            String vv = attributes.getValue("v");
+            ReKey = ReKey + kk + ';';
+            ReValue = ReValue + vv + ';';
+            relation.setTagkey(ReKey);
+            relation.setTagvalue(ReValue);
+            //System.out.println("得到的："+relation.getNid());
+
             tag.setFather("relation");
             tag.setFid(fatherId);
-            tag.setTagkey(attributes.getValue("k"));
-            tag.setTagvalue(attributes.getValue("v"));
+            tag.setTagkey(kk);
+            tag.setTagvalue(vv);
         }
     }
+
     /**
-     *@Description:  作用是解析闭合标签，如<name>Sumtudou</name>,得到里面的Sumtudou
+     * @Description: 作用是解析闭合标签，如<name>Sumtudou</name>,得到里面的Sumtudou
      * @author Sumtudou
      * @date 2019/11/5
-    */
+     */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         super.characters(ch, start, length);
@@ -267,10 +302,17 @@ public class XmlParseHandler extends DefaultHandler {
     protected List<Node> getWays() {
         return nodes;
     }
-    protected List<Road>getRoads(){
+
+    protected List<Road> getRoads() {
         return roads;
     }
-    protected List<Tag>getTags(){
+
+    protected List<Relation> getRelations() {
+        return relations;
+    }
+
+    protected List<Tag> getTags() {
         return tags;
     }
+
 }

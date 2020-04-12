@@ -1,5 +1,6 @@
 package com.linln.admin.system.tools;
 
+import com.linln.admin.system.domain.Relation;
 import com.linln.admin.system.domain.Road;
 import com.linln.admin.system.domain.Tag;
 import com.linln.admin.system.domain.Node;
@@ -15,6 +16,8 @@ public class XmlReaderHandler {
     private static List<Node>nodes;
     private static List<Road>roads;
     private static List<Tag>tags;
+    private static List<Relation>relations;
+
     /**
      *@Description:   XML读入并解析，只有解析之后才能获取到必要的List
      * @author Sumtudou
@@ -22,7 +25,7 @@ public class XmlReaderHandler {
     */
     public static  void setAll() throws ParserConfigurationException, SAXException, IOException {
         // 加载文件返回文件的输入流
-        File f = new File("C://Users//11630//Desktop//beijing_01.osm");    // 声明File对象
+        File f = new File("C://Users//11630//Desktop//beijing.osm");    // 声明File对象
         InputStream input = new FileInputStream(f);
 
         XmlParseHandler handler = new XmlParseHandler();
@@ -36,6 +39,7 @@ public class XmlReaderHandler {
         nodes = handler.getWays();
         roads = handler.getRoads();
         tags  =handler.getTags();
+        relations = handler.getRelations();
 
     }
     public static List<Node>getNodes(){
@@ -46,6 +50,9 @@ public class XmlReaderHandler {
     }
     public static List<Tag>getTags(){
         return tags;
+    }
+    public static List<Relation>getRelations(){
+        return relations;
     }
 
 
