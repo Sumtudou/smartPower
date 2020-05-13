@@ -18,11 +18,27 @@
         <i class="layui-icon layui-icon-refresh refresh-btn"></i>
     </div>
     <div class="layui-card-body">
+
+        <!--作为变量控制-->
+        <input type="hidden" value="0" id="flag">
+
         <div style="min-height: 200px">
 
             <div id="buttons" style="margin-left: 40%;margin-top: 30px;">
-                <a href="#" class="layui-btn">选择文件</a>
-                <button type="button" id="submit" class="layui-btn"> 插入数据库</button>
+
+                <div class="layui-upload-drag" id="test10">
+                    <i class="layui-icon"></i>
+                    <p>点击上传，或将文件拖拽到此处</p>
+                    <div class="layui-hide" id="uploadDemoView">
+                        <hr>
+                        <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                    </div>
+                </div>
+
+                <br/>
+
+                <button style="margin-top:20px; margin-left:80px;" type="button" id="submit" class="layui-btn"> 数据预处理
+                </button>
             </div>
 
             <div style="margin-top: 20px; margin-left: 20%">
@@ -39,6 +55,10 @@
                 <a style="margin-left: 15px;" id="btn-sub" class="open-popup1 layui-btn layui-btn-normal"
                    data-title="详细信息"
                    data-size="800,600" href="#" onclick="ggg()">完成数据挖掘</a>
+            </div>
+
+            <div style="margin-top: 320px;">
+
             </div>
 
         </div>
@@ -71,16 +91,11 @@
             layer.msg("数值不能小于零或大于一", {time: 1000, icon: 7});
             return false;
         }
-
-
     }
 
     function limit(value) {
-
         var num = Number(value);
-
         console.log("数字：" + num);
-
         if (num < 0 || num > 1) {
             return false;
         }
@@ -88,6 +103,35 @@
     }
 </script>
 
+
+<script>
+    layui.use(['upload', 'layer'], function () {
+        var $ = layui.jquery
+            , upload = layui.upload;
+        var layer2 = layui.layer;    //内嵌式用法
+        console.log("ggg");
+        upload.render({
+            elem: '#test10'
+            , url: '#' //改成您自己的上传接口
+            , auto: false
+            , accept: 'file'
+            , done: function (res) {
+                layer.msg('上传成功');
+                layui.$('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.files.file);
+                console.log(res)
+            }
+            , error: function () {
+                console.log("error");
+            }
+            ,before: function(obj){
+                $("#flag").val("1");
+                console.log("上传了？？？")
+            }
+        });
+        //hahahahah
+
+    });
+</script>
 <SCRIPT>
 
     /* 添加/修改弹出层 */
@@ -95,7 +139,7 @@
         var title = $(this).data("title");
         var url = $(this).attr("data-url");
 
-        console.log("弹出前："+url);
+        console.log("弹出前：" + url);
 
         if (url != "ggg") {
 
@@ -150,7 +194,15 @@
             form = layui.form;
         $("#submit").click(function () {
 
-            var index1 = layer2.load(0);  //,{time: 20*1000}
+            flags = $("#flag").val();
+            console.log(flags);
+            if (flags=="1") {
+                console.log("11111")
+            }else if(flags=="0") {
+                console.log("0000")
+            }
+
+            /*var index1 = layer2.load(0);  //,{time: 20*1000}
 
             $.ajax({
                 type: "POST",
@@ -177,7 +229,7 @@
                 },
                 error: function (data) {
                 }
-            });
+            });*/
         });
     });
 </script>
