@@ -7,14 +7,12 @@
         .in-a-line {
             display: inline-block;
         }
-
     </style>
-
 </head>
 <body class="timo-layout-page">
 <div class="layui-card">
     <div class="layui-card-header timo-card-header">
-        <span><i class="fa fa-bars"></i> way管理</span>
+        <span><i class="fa fa-bars"></i> OSM控制台</span>
         <i class="layui-icon layui-icon-refresh refresh-btn"></i>
     </div>
     <div class="layui-card-body">
@@ -39,32 +37,65 @@
 
                 <button style="margin-top:20px; margin-left:80px;" type="button" id="submit" class="layui-btn"> 数据预处理
                 </button>
+                <!--                <button style="margin-top:20px; margin-left:80px;" type="button" id="submit1" class="layui-btn"> SAX解析至数据库-->
+                <!--                </button>-->
             </div>
 
             <div style="margin-top: 20px; margin-left: 20%">
 
-                <p class="in-a-line">最小支持度：</p> <input id="MinSupport" type="text" style="width: 20%" name="title"
-                                                       required lay-verify="required" placeholder="请输入小数"
-                                                       autocomplete="off" class="layui-input in-a-line"
-                                                       oninput="value=value.replace(/[^\d.]/g,'')">
-                <p class="in-a-line">最小置信度：</p> <input id="MinConfidence" type="text" style="width: 20%" name="title"
-                                                       required lay-verify="required" placeholder="请输入小数"
-                                                       autocomplete="off" class="layui-input in-a-line"
-                                                       oninput="value=value.replace(/[^\d.]/g,'')">
-
-                <a style="margin-left: 15px;" id="btn-sub" class="open-popup1 layui-btn layui-btn-normal"
+                <a style="margin-left: 31.5%" id="btn-sub" class="layui-btn layui-btn-normal"
                    data-title="详细信息"
+
                    data-size="800,600" href="#" onclick="ggg()">完成数据挖掘</a>
             </div>
 
-            <div style="margin-top: 320px;">
+            <div id="table1" style="display: none; width: 80%;margin-left: 10% ">
+                <table class="layui-table  timo-detail-table">
+                    <colgroup>
+                        <col width="100">
+                        <col width="100">
+                        <col>
+                    </colgroup>
+
+                    <tbody>
+                    <tr>
+
+                        <td width="33%" style="text-align:left;"><b><p>相关度分析</p></b></td>
+
+                        <td width="33%" style="text-align:center;">
+                            <a class="layui-btn layui-btn-sm layui-btn-warm" onClick="lastData()">上一个</a>
+                        </td>
+
+                        <td width="33%" style="text-align:center;">
+                            <a class="layui-btn layui-btn-sm" onClick="nextData()">下一个</a>
+                        </td>
+                    </tr>
+
+                    <tr id="first">
+                        <td width="33%" style="text-align:left;"><p text="类名:">1</p></td>
+                        <td width="33%" style="text-align:left;"><p text="类型:">2</p></td>
+                        <td width="34%" style="text-align:left;"><p text="数据长度:">3</p></td>
+                    </tr>
+                    <tr id="second">
+                        <td><p text="最小支持度:">4</p>
+                        </td>
+                        <td><p text="最小置信度:">5</p>
+                        </td>
+                        <td><p text="最小支持度数目:">6</p></td>
+                    </tr>
+                    </tbody>
+                </table>
 
             </div>
+
+            <div id="table2" style="width: 80%;margin-left: 10% ; display: none;">
+                <table id="demo" lay-filter="test"></table>
+            </div>
+
 
         </div>
 
     </div>
-</div>
 </div>
 
 <script th:replace="/common/template :: script"></script>
@@ -72,34 +103,115 @@
 <script type="text/javascript" src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/static/layer/layer.js"></script>
 
 <!--<script src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/plugins/jquery-3.3.1.min.js"></script>-->
-<script>
-    function ggg() {
-        var MinC = $("#MinConfidence").val();
-        var MinS = $("#MinSupport").val();
+<script th:inline='none'>
+    var firstUrl = "http://sumtudou.cn/index/getRules?no=1&type=0";
+    var firstNo = 1;
+    var firstType = 0;
+    var tableIns;
 
-        console.log(MinC + "gdd" + MinS);
-        if (limit(MinC) && limit(MinS)) {
-            console.log("gggg");
-            var url = "/system/osmindex/detail" + '?MinSupport=' + MinS + '&MinConfidence=' + MinC;
-            console.log(MinC + "  " + MinS);
-            console.log(url);
-            $("#btn-sub").attr("data-url", url);
-
-        } else {
-            $("#btn-sub").attr("data-url", "ggg");
-
-            layer.msg("数值不能小于零或大于一", {time: 1000, icon: 7});
-            return false;
+    function nextData() {
+        if (firstType <= 2 && firstNo <= 19) {
+            firstType = firstType + 1;
+        } else if (firstType == 3 && firstNo <= 18) {
+            firstType = 0;
+            firstNo = firstNo + 1;
         }
+        change(firstNo, firstType);
     }
 
-    function limit(value) {
-        var num = Number(value);
-        console.log("数字：" + num);
-        if (num < 0 || num > 1) {
-            return false;
+    function lastData() {
+        if(firstType>0){
+            firstType = firstType -1;
+        }else if(firstType == 0 && firstNo>=2){
+            firstType = 3;
+            firstNo = firstNo -1 ;
         }
-        return true;
+        change(firstNo, firstType);
+    }
+    //通过两个参数进行拼接url
+    function change(no, type) {
+        str = "http://sumtudou.cn/index/getRules?no=";    //1&type=0";
+        str = str + no.toString() + "&type=" + type.toString();
+        url = str;
+        tableIns.reload({
+            url: url
+        });
+        getData(url);
+    }
+
+    layui.use('table', function () {
+        var table = layui.table;
+        //第一个实例
+        tableIns = table.render({
+            elem: '#demo'
+            , height: 312
+            , url: firstUrl //数据接口
+            , page: true //开启分页
+            , cols: [[ //表头
+                {field: 'id', title: '序号', width: 281, sort: true, fixed: 'left'}
+                , {field: 'confidence', title: '置信度', sort: true, width: 281}
+                , {field: 'first', title: '首项', width: 281, sort: true}
+                , {field: 'second', title: '末项', width: 281}
+            ]]
+        });
+    });
+
+    function getData(url) {
+        $.get(url, function (data, status) {
+            var obj = JSON.parse(data); //由JSON字符串转换为JSON对象
+            firstArr = ["name", "type", "data_len"];
+            for (var i = 0; i < 3; i++) {
+                title = $($("#first").find("p")[i]).attr("text");
+                value = title +"  " + obj[firstArr[i]];
+                $($("#first").find("p")[i]).text(value);
+            }
+            secondArr = ["min_sup", "min_conf", "min_sup_num"];
+            for (var i = 0; i < 3; i++) {
+                title = $($("#second").find("p")[i]).attr("text");
+                if(i != 2){
+                    var number = parseFloat(obj[secondArr[i]]);
+                    value = title + "  "+(number*100).toString()+"%";
+                }else{
+                    value = title + "  "+obj[secondArr[i]];
+                }
+                $($("#second").find("p")[i]).text(value);
+            }
+        });
+    }
+
+    function ggg() {
+        $("#table1").css('display', 'block');
+        $("#table2").css('display', 'block');
+        getData(firstUrl);
+    }
+
+</script>
+
+<script>
+    layui.use(['layer'], function () {
+
+        var layer2 = layui.layer;
+        $("#submit").click(function () {
+            console.log($(".layui-upload-choose"));
+
+            len = $(".layui-upload-choose").length
+            if (len == 0) {
+                layer2.msg('请选择文件!', {
+                    icon: 2,
+                    time: 1500
+                });
+            } else {
+                var index1 = layer2.load(0, {time: 5000});  //,{time: 20*1000}
+                i = setTimeout("bbb()", 5000);//3秒后执行b()
+            }
+        });
+    });
+
+    function bbb() {
+        layer.msg('处理完成！', {
+            icon: 1,
+            time: 1500
+        });
     }
 </script>
 
@@ -123,7 +235,7 @@
             , error: function () {
                 console.log("error");
             }
-            ,before: function(obj){
+            , before: function (obj) {
                 $("#flag").val("1");
                 console.log("上传了？？？")
             }
@@ -141,43 +253,40 @@
 
         console.log("弹出前：" + url);
 
-        if (url != "ggg") {
-
-            if ($(this).hasClass("open-popup-param")) {
-                var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
-                var param = '';
-                if (tdcheckbox.length === 0) {
-                    layer.msg('请选择一条记录');
-                    return;
-                }
-                if (tdcheckbox.length > 1 && $(this).data("type") === 'radio') {
-                    layer.msg('只允许选中一个');
-                    return;
-                }
-                tdcheckbox.each(function (key, val) {
-                    param += "ids=" + $(val).attr("value") + "&";
-                });
-                param = param.substr(0, param.length - 1);
-                url += "?" + param;
+        if ($(this).hasClass("open-popup-param")) {
+            var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
+            var param = '';
+            if (tdcheckbox.length === 0) {
+                layer.msg('请选择一条记录');
+                return;
             }
-            var size = $(this).attr("data-size");
-            if (size === undefined || size === "auto") {
-                size = ['50%', '80%'];
-            } else if (size === "max") {
-                size = ['100%', '100%'];
-            } else if (size.indexOf(',') !== -1) {
-                var split = size.split(",");
-                size = [split[0] + 'px', split[1] + 'px'];
+            if (tdcheckbox.length > 1 && $(this).data("type") === 'radio') {
+                layer.msg('只允许选中一个');
+                return;
             }
-            window.layerIndex = layer.open({
-                type: 2,
-                title: title,
-                shadeClose: true,
-                maxmin: true,
-                area: size,
-                content: [url, 'on']
+            tdcheckbox.each(function (key, val) {
+                param += "ids=" + $(val).attr("value") + "&";
             });
+            param = param.substr(0, param.length - 1);
+            url += "?" + param;
         }
+        var size = $(this).attr("data-size");
+        if (size === undefined || size === "auto") {
+            size = ['50%', '80%'];
+        } else if (size === "max") {
+            size = ['100%', '100%'];
+        } else if (size.indexOf(',') !== -1) {
+            var split = size.split(",");
+            size = [split[0] + 'px', split[1] + 'px'];
+        }
+        window.layerIndex = layer.open({
+            type: 2,
+            title: title,
+            shadeClose: true,
+            maxmin: true,
+            area: size,
+            content: [url, 'on']
+        });
     });
 
 </SCRIPT>
@@ -192,18 +301,17 @@
         var layer2 = layui.layer,   //内嵌式用法
             $ = layui.jquery,
             form = layui.form;
-        $("#submit").click(function () {
+        $("#submit1").click(function () {
 
             flags = $("#flag").val();
             console.log(flags);
-            if (flags=="1") {
+            if (flags == "1") {
                 console.log("11111")
-            }else if(flags=="0") {
+            } else if (flags == "0") {
                 console.log("0000")
             }
 
             /*var index1 = layer2.load(0);  //,{time: 20*1000}
-
             $.ajax({
                 type: "POST",
                 url: ctx + 'system/osmindex/savesql',

@@ -3,35 +3,75 @@
 <head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
 </head>
 <body>
-    <div class="timo-detail-page">
+<div class="timo-detail-page">
 
-        <div class="timo-detail-title">相关度分析</div>
+    <div class="timo-detail-title">相关度分析      <a style = "margin-left: 70%;" class="layui-btn layui-btn-sm" onClick="clicks()">下一个</a>
+    </div>
+    <div>
+
         <table class="layui-table timo-detail-table">
             <colgroup>
                 <col width="100">
                 <col width="100">
                 <col>
             </colgroup>
-            <thead>
-            <tr>
-                <th>tag</th>
-                <th>value</th>
-                <th>次数</th>
-                <th>支持度</th>
-                <th>置信度</th>
-            </tr>
-            </thead>
+
             <tbody>
-            <tr th:each="info,infoStat : ${tagsons}">
-                <td th:text="${info.key}"></td>
-                <td th:text="${info.value}"></td>
-                <td th:text="${info.times}"></td>
-                <td th:text="${#numbers.formatDecimal(info.support,1,'COMMA',2,'POINT')}*100+'%'"></td>
-                <td th:text="${#numbers.formatDecimal(info.confidence,1,'COMMA',2,'POINT')}*100+'%'"></td>
+            <tr>
+                <td width="33%" style="text-align:left;"><p th:text="'类名:'+${rules[0].no}+'-'+${rules[0].name}"></p></td>
+                <td width="33%" style="text-align:left;"><p th:text="'类型:'+${rules[0].type}"></p></td>
+                <td width="34%" style="text-align:left;"><p th:text="'数据长度:'+${rules[0].data_len}"></p></td>
+            </tr>
+            <tr>
+                <td><p th:text="'最小支持度:'+${#numbers.formatDecimal(rules[0].min_sup,1,'COMMA',2,'POINT')}*100+'%'"></p>
+                </td>
+                <td><p th:text="'最小置信度:'+${#numbers.formatDecimal(rules[0].min_conf,1,'COMMA',2,'POINT')}*100+'%'"></p>
+                </td>
+                <td><p th:text="'最小支持度数目:'+${rules[0].min_sup_num}"></p></td>
             </tr>
             </tbody>
         </table>
+
     </div>
+
+    <table class="layui-table timo-detail-table">
+        <colgroup>
+            <col width="100">
+            <col width="100">
+            <col>
+        </colgroup>
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>支持度</th>
+            <th>first</th>
+            <th>second</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="info,infoStat : ${rules}">
+            <td th:text="${info.id}"></td>
+            <td th:text="${#numbers.formatDecimal(info.confidence,1,'COMMA',2,'POINT')}*100+'%'"></td>
+            <td th:text="${info.first}"></td>
+            <td th:text="${info.second}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 <script th:replace="/common/template :: script"></script>
+<script>
+
+    function clicks() {
+        window.layerIndex = layer.open({
+            type: 2,
+            title: "ggg",
+            shadeClose: true,
+            maxmin: true,
+            area: ['500px', '300px'],
+            content: ["http://www.baidu.com", 'on']
+        });
+    }
+
+</script>
 </body>
 </html>

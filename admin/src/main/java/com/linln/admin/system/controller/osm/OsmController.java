@@ -2,6 +2,7 @@ package com.linln.admin.system.controller.osm;
 
 import com.linln.admin.system.domain.*;
 import com.linln.admin.system.mapper.OsmMapper;
+import com.linln.admin.system.repository.RuleRepository;
 import com.linln.admin.system.service.RelationService;
 import com.linln.admin.system.service.RoadService;
 import com.linln.admin.system.service.TagService;
@@ -34,7 +35,8 @@ import static java.util.Collections.sort;
 public class OsmController {
 
     //private EmojiConverter emojiConverter = EmojiConverter.getInstance();
-
+    @Autowired
+    private RuleRepository ruleRepository;
     @Autowired
     private NodeService nodeService;
     @Autowired
@@ -61,20 +63,50 @@ public class OsmController {
                          @RequestParam("MinConfidence") Double MinConfidence) {
 
         System.out.println(MinSupport + "  ggg  " + MinConfidence);
-
-        List<TagSon> tagsons = CalculateRes.solve();
-        sort(tagsons, new SortBySupport());
-        List<TagSon> ggg = new ArrayList<>();
-
-        int sum = 0;
-        for (TagSon item : tagsons) {
-            if (item.getSupport() > MinSupport && item.getConfidence() > MinConfidence) {
-                ggg.add(item);
-                sum++;
-            }
-            if (sum > 14) break;
+        List<Rule> rules = ruleRepository.getRules(15, "TAGINSIDE");
+        //System.out.println(rules);
+        //System.out.println(rules.isEmpty());
+        for (Rule item : rules) {
+            System.out.println(item);
         }
-        model.addAttribute("tagsons", ggg);
+
+
+        model.addAttribute("rules", rules);
+
+//        ArrayList<String> types = new ArrayList<>();
+//        types.add("KEY");
+//        types.add("VALUE");
+//        types.add("KV");
+//        types.add("TAGINSIDE");
+//
+//        for (int i = 0; i < 20; i++) {
+//            for (String type : types) {
+//                List<Rule> the_rules = ruleRepository.getRules(15, "TAGINSIDE");
+//                model.addAttribute("rules", the_rules);
+//                //返回
+//            }
+//        }
+
+        return "/system/osmindex/detail";
+    }
+
+    @GetMapping("/page")
+    @RequiresPermissions("system:osmindex:index")
+    public String page(Model model) {
+        ArrayList<String> types = new ArrayList<>();
+        types.add("KEY");
+        types.add("VALUE");
+        types.add("KV");
+        types.add("TAGINSIDE");
+
+        for (int i = 0; i < 20; i++) {
+            for (String type : types) {
+                List<Rule> the_rules = ruleRepository.getRules(15, "TAGINSIDE");
+                model.addAttribute("rules", the_rules);
+                //返回
+            }
+        }
+
         return "/system/osmindex/detail";
     }
 
@@ -91,9 +123,6 @@ public class OsmController {
         osmMapper.truncateTable("osm_road");
         osmMapper.truncateTable("osm_tag");
         osmMapper.truncateTable("osm_relation");
-
-
-
 
 
         CountDownLatch countDownLatch = new CountDownLatch(4);
@@ -114,26 +143,6 @@ public class OsmController {
         countDownLatch.countDown();
 
         return "success";
-    }
-}
-
-class SortBySupport implements Comparator {
-    public int compare(Object o1, Object o2) {
-        TagSon ts1 = (TagSon) o1;
-        TagSon ts2 = (TagSon) o2;
-        Integer times1 = ts1.getTimes();
-        Integer times2 = ts2.getTimes();
-        return times1.compareTo(times2) * (-1);
-    }
-}
-
-class SortByConfidence implements Comparator {
-    public int compare(Object o1, Object o2) {
-        TagSon ts1 = (TagSon) o1;
-        TagSon ts2 = (TagSon) o2;
-        Double times1 = ts1.getConfidence();
-        Double times2 = ts2.getConfidence();
-        return times1.compareTo(times2) * (-1);
     }
 }
 
