@@ -88,7 +88,7 @@
 
             </div>
 
-            <div id="table2" style="width: 80%;margin-left: 10% ; display: none;">
+            <div id="table2" style="width: 1124px;margin-left: 10% ; display: none;">
                 <table id="demo" lay-filter="test"></table>
             </div>
 
@@ -108,11 +108,11 @@
     var firstNo = 1;
     var firstType = 0;
     var tableIns;
-
+    var maxNo = 5;
     function nextData() {
-        if (firstType <= 2 && firstNo <= 19) {
+        if (firstType <= 2 && firstNo <= maxNo) {
             firstType = firstType + 1;
-        } else if (firstType == 3 && firstNo <= 18) {
+        } else if (firstType == 3 && firstNo <= maxNo - 1) {
             firstType = 0;
             firstNo = firstNo + 1;
         }
@@ -148,10 +148,11 @@
             , url: firstUrl //数据接口
             , page: true //开启分页
             , cols: [[ //表头
-                {field: 'id', title: '序号', width: 281, sort: true, fixed: 'left'}
-                , {field: 'confidence', title: '置信度', sort: true, width: 281}
-                , {field: 'first', title: '首项', width: 281, sort: true}
-                , {field: 'second', title: '末项', width: 281}
+                {field: 'id', title: '序号', width: 80, sort: true} // fixed: 'left'
+                , {field: 'support', title: '支持度(%)', sort: true, width: 200}
+                , {field: 'confidence', title: '置信度(%)', sort: true, width: 200}
+                , {field: 'first', title: '首项', width: 300}
+                , {field: 'second', title: '末项', width: 300}
             ]]
         });
     });
@@ -244,52 +245,7 @@
 
     });
 </script>
-<SCRIPT>
 
-    /* 添加/修改弹出层 */
-    $(document).on("click", ".open-popup1, .open-popup-param", function () {
-        var title = $(this).data("title");
-        var url = $(this).attr("data-url");
-
-        console.log("弹出前：" + url);
-
-        if ($(this).hasClass("open-popup-param")) {
-            var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
-            var param = '';
-            if (tdcheckbox.length === 0) {
-                layer.msg('请选择一条记录');
-                return;
-            }
-            if (tdcheckbox.length > 1 && $(this).data("type") === 'radio') {
-                layer.msg('只允许选中一个');
-                return;
-            }
-            tdcheckbox.each(function (key, val) {
-                param += "ids=" + $(val).attr("value") + "&";
-            });
-            param = param.substr(0, param.length - 1);
-            url += "?" + param;
-        }
-        var size = $(this).attr("data-size");
-        if (size === undefined || size === "auto") {
-            size = ['50%', '80%'];
-        } else if (size === "max") {
-            size = ['100%', '100%'];
-        } else if (size.indexOf(',') !== -1) {
-            var split = size.split(",");
-            size = [split[0] + 'px', split[1] + 'px'];
-        }
-        window.layerIndex = layer.open({
-            type: 2,
-            title: title,
-            shadeClose: true,
-            maxmin: true,
-            area: size,
-            content: [url, 'on']
-        });
-    });
-
-</SCRIPT>
 
 <script>
     var ctx = "[[@{/}]]";
