@@ -124,10 +124,12 @@ public class OsmController {
         osmMapper.truncateTable("osm_tag");
         osmMapper.truncateTable("osm_relation");
 
-
+        // 相当于以下四个线程同时起跑
+        // 当 countDownLatch = 0 时，await（）才会释放阻塞，四个线程才会开始同时工作。
+        // 当 countDownLatch > 0 时，await（）会阻塞当前线程。
         CountDownLatch countDownLatch = new CountDownLatch(4);
         Thread thread = new Thread(new ThreadForSaveTag(countDownLatch, tags, tagService));
-        thread.start();
+        thread.start();   //在这里会先阻塞，因为就算执行了下一行，这个 4 也才变成 3 ，而不会是 0
         countDownLatch.countDown();
 
         Thread thread1 = new Thread(new ThreadForSaveNode(countDownLatch, nodes, nodeService));
@@ -158,7 +160,6 @@ class ThreadForSaveTag implements Runnable {
         this.tags = tags;
         this.tagService = tagService;
     }
-
     @Override
     public void run() {
         try {
@@ -188,7 +189,6 @@ class ThreadForSaveNode implements Runnable {
         this.nodes = nodes;
         this.nodeService = nodeService;
     }
-
     @Override
     public void run() {
         try {
@@ -205,7 +205,6 @@ class ThreadForSaveNode implements Runnable {
                     nodeService.save(node1);
                 }
             }
-
             countDownLatch.await();
         } catch (InterruptedException e) {
             e.printStackTrace();

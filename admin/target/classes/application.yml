@@ -4,7 +4,7 @@ server:
 
 ### TIMO配置
 project:
-  captcha-open: false                         #是否开启登录验证码
+  captcha-open: true                         #是否开启登录验证码
   shiro:
     remember-me-timeout: 7                    #cookie记住登录信息时间，默认7天（天）
     global-session-timeout: 7200              #Session会话超时时间，默认120分钟（秒）
@@ -19,7 +19,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/osm?useSSL=false
     username: root
-    password: 123456
+    password: sumtudou
 
 ## jpa配置
   jpa:

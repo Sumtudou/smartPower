@@ -39,15 +39,12 @@
                 </button>
                 <!--                <button style="margin-top:20px; margin-left:80px;" type="button" id="submit1" class="layui-btn"> SAX解析至数据库-->
                 <!--                </button>-->
+                <br/>
+                <a style="margin-left: 73px; margin-top: 20px;" id="btn-sub" class="layui-btn layui-btn-normal"
+                   onclick="ggg()">完成数据挖掘</a>
+
             </div>
 
-            <div style="margin-top: 20px; margin-left: 20%">
-
-                <a style="margin-left: 31.5%" id="btn-sub" class="layui-btn layui-btn-normal"
-                   data-title="详细信息"
-
-                   data-size="800,600" href="#" onclick="ggg()">完成数据挖掘</a>
-            </div>
 
             <div id="table1" style="display: none; width: 80%;margin-left: 10% ">
                 <table class="layui-table  timo-detail-table">
@@ -63,10 +60,12 @@
                         <td width="33%" style="text-align:left;"><b><p>相关度分析</p></b></td>
 
                         <td width="33%" style="text-align:center;">
-                            <a class="layui-btn layui-btn-sm layui-btn-warm" onClick="lastData()">上一个</a>
+                            <a class="layui-btn layui-btn-sm layui-btn-warm" onClick="lastRank()">上一档</a>
+                            <a class="layui-btn layui-btn-sm" onClick="nextRank()">下一档</a>
                         </td>
 
                         <td width="33%" style="text-align:center;">
+                            <a class="layui-btn layui-btn-sm layui-btn-warm" onClick="lastData()">上一个</a>
                             <a class="layui-btn layui-btn-sm" onClick="nextData()">下一个</a>
                         </td>
                     </tr>
@@ -88,214 +87,377 @@
 
             </div>
 
-            <div id="table2" style="width: 1124px;margin-left: 10% ; display: none;">
+            <div id="table2" style="width: 1080px;margin-left: 7% ; display: none;">
                 <table id="demo" lay-filter="test"></table>
             </div>
 
+            <div id="table3" style="display: none; width: 80%;margin-left: 10% ">
+
+
+                <form class="layui-form" action="" style="width: 50%; margin-top:80px;">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Tag：</label>
+                        <div class="layui-input-block" >
+                            <input  id = "three_rule" type="text" name="title" required lay-verify="required"
+                                   placeholder="请输入Tag" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">类：</label>
+                        <div class="layui-input-block">
+                            <select  name="three_class" lay-verify="required" style="width: 40%">
+                                <option value=""></option>
+                                <option value="1">highway=residential</option>
+                                <option value="2">power=tower</option>
+                                <option value="3">highway=service</option>
+                                <option value="4">highway=tertiary</option>
+                                <option value="5">highway=footway</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <button style="margin-top:20px; margin-left:80px;" type="button" id="three_submit" class="layui-btn"> 查询Tag
+                </button>
+
+            </div>
+
+            <div id="table4" style="width: 1080px;margin-left: 7% ; display: none;">
+                <table id="demo2" lay-filter="test111"></table>
+            </div>
 
         </div>
-
     </div>
-</div>
 
-<script th:replace="/common/template :: script"></script>
-<script th:src="@{/js/plugins/jquery-3.3.1.min.js}" charset="utf-8"></script>
-<script type="text/javascript" src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/static/layer/layer.js"></script>
+    <script th:replace="/common/template :: script"></script>
+    <script th:src="@{/js/plugins/jquery-3.3.1.min.js}" charset="utf-8"></script>
+    <script type="text/javascript" src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/static/layer/layer.js"></script>
 
-<!--<script src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/plugins/jquery-3.3.1.min.js"></script>-->
-<script th:inline='none'>
-    var firstUrl = "http://sumtudou.cn/index/getRules?no=1&type=0";
-    var firstNo = 1;
-    var firstType = 0;
-    var tableIns;
-    var maxNo = 5;
-    function nextData() {
-        if (firstType <= 2 && firstNo <= maxNo) {
-            firstType = firstType + 1;
-        } else if (firstType == 3 && firstNo <= maxNo - 1) {
-            firstType = 0;
-            firstNo = firstNo + 1;
+    <!--<script src="https://sumtudou.oss-cn-shanghai.aliyuncs.com/plugins/jquery-3.3.1.min.js"></script>-->
+    <script th:inline='none'>
+        var tableIns2;
+        layui.use(['form'], function(){
+            var $ = layui.$
+                ,form = layui.form;
+
+            $("#three_submit").click(function () {
+                var rule =  $(" #three_rule ").val();
+                var classis = $("select[name='three_class']").val();
+                console.log(rule+"   "+classis);
+                $("#table4").css('display', 'block');
+                three_change(classis,rule);
+            });
+        });
+        var threeUrl = "http://localhost/index/getContext?no=1&rule=layer=1";
+        //var threeUrl = "http://localhost/index/getContext";
+        function three_change(no, rule) {
+            str = "http://localhost/index/getContext?no=";    //1&type=0";
+            str = str + no.toString() + "&rule=" +rule;
+            url = str;
+            console.log(url);
+            tableIns2.reload({
+                url: url
+            });
         }
-        change(firstNo, firstType);
-    }
 
-    function lastData() {
-        if(firstType>0){
-            firstType = firstType -1;
-        }else if(firstType == 0 && firstNo>=2){
-            firstType = 3;
-            firstNo = firstNo -1 ;
-        }
-        change(firstNo, firstType);
-    }
-    //通过两个参数进行拼接url
-    function change(no, type) {
-        str = "http://sumtudou.cn/index/getRules?no=";    //1&type=0";
-        str = str + no.toString() + "&type=" + type.toString();
-        url = str;
-        tableIns.reload({
-            url: url
-        });
-        getData(url);
-    }
+        layui.use(['table','form'], function () {
+            var table = layui.table;
+            var $ = layui.$
+                ,form = layui.form;
+            //第一个实例
+            tableIns2 = table.render({
+                elem: '#demo2'
+                , height: 250
+                , url: threeUrl //数据接口
+                , page: false //是否开启分页
+                , cols: [[ //表头
+                      {field: 'support', title: '支持度(%)', sort: true, width: 240}
+                    , {field: 'confidence', title: '置信度(%)', sort: true, width: 240}
+                    , {field: 'first', title: '首项', width: 300}
+                    , {field: 'second', title: '末项', width: 300}
+                ]]
+                ,done: function(res, curr, count){
+                    //如果是异步请求数据方式，res即为你接口返回的信息。
+                    //如果是直接赋值的方式，res即为：{data: [], count: 99} data为当前页数据、count为数据总长度
+                    console.log("回调");
 
-    layui.use('table', function () {
-        var table = layui.table;
-        //第一个实例
-        tableIns = table.render({
-            elem: '#demo'
-            , height: 312
-            , url: firstUrl //数据接口
-            , page: true //开启分页
-            , cols: [[ //表头
-                {field: 'id', title: '序号', width: 80, sort: true} // fixed: 'left'
-                , {field: 'support', title: '支持度(%)', sort: true, width: 200}
-                , {field: 'confidence', title: '置信度(%)', sort: true, width: 200}
-                , {field: 'first', title: '首项', width: 300}
-                , {field: 'second', title: '末项', width: 300}
-            ]]
-        });
-    });
+                    var otrs= $("div#table4 .layui-table-box .layui-table-body.layui-table-main table tbody tr");
 
-    function getData(url) {
-        $.get(url, function (data, status) {
-            var obj = JSON.parse(data); //由JSON字符串转换为JSON对象
-            firstArr = ["name", "type", "data_len"];
-            for (var i = 0; i < 3; i++) {
-                title = $($("#first").find("p")[i]).attr("text");
-                value = title +"  " + obj[firstArr[i]];
-                $($("#first").find("p")[i]).text(value);
-            }
-            secondArr = ["min_sup", "min_conf", "min_sup_num"];
-            for (var i = 0; i < 3; i++) {
-                title = $($("#second").find("p")[i]).attr("text");
-                if(i != 2){
-                    var number = parseFloat(obj[secondArr[i]]);
-                    value = title + "  "+(number*100).toString()+"%";
-                }else{
-                    value = title + "  "+obj[secondArr[i]];
-                }
-                $($("#second").find("p")[i]).text(value);
-            }
-        });
-    }
+                    for(let i=0 ; i<otrs.length;i++){
+                        var otr = otrs[i];
+                        var otds = $(otr).find("td");
+                        console.log("进入循环行：");
+                        console.log(otds[2]);
+                        console.log(otds[3]);
 
-    function ggg() {
-        $("#table1").css('display', 'block');
-        $("#table2").css('display', 'block');
-        getData(firstUrl);
-    }
-
-</script>
-
-<script>
-    layui.use(['layer'], function () {
-
-        var layer2 = layui.layer;
-        $("#submit").click(function () {
-            console.log($(".layui-upload-choose"));
-
-            len = $(".layui-upload-choose").length
-            if (len == 0) {
-                layer2.msg('请选择文件!', {
-                    icon: 2,
-                    time: 1500
-                });
-            } else {
-                var index1 = layer2.load(0, {time: 5000});  //,{time: 20*1000}
-                i = setTimeout("bbb()", 5000);//3秒后执行b()
-            }
-        });
-    });
-
-    function bbb() {
-        layer.msg('处理完成！', {
-            icon: 1,
-            time: 1500
-        });
-    }
-</script>
+                        console.log("首项的："+$(otds[2]).find("div").text());
+                        console.log("末项的："+$(otds[3]).find("div").text());
 
 
-<script>
-    layui.use(['upload', 'layer'], function () {
-        var $ = layui.jquery
-            , upload = layui.upload;
-        var layer2 = layui.layer;    //内嵌式用法
-        console.log("ggg");
-        upload.render({
-            elem: '#test10'
-            , url: '#' //改成您自己的上传接口
-            , auto: false
-            , accept: 'file'
-            , done: function (res) {
-                layer.msg('上传成功');
-                layui.$('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.files.file);
-                console.log(res)
-            }
-            , error: function () {
-                console.log("error");
-            }
-            , before: function (obj) {
-                $("#flag").val("1");
-                console.log("上传了？？？")
-            }
-        });
-        //hahahahah
+                        var first = $(otds[2]).find("div");
+                        var second =$(otds[3]).find("div");
 
-    });
-</script>
+                        //加点击事件的，搞不定了。
+                        // first.on("click",function(){
+                        //     var txt = $(otds[2]).find("div").text();
+                        //
+                        //     alert(txt);
+                        //
+                        //     var classis = $("select[name='three_class']").val();
+                        //     console.log("classis:"+classis);
+                        //     three_change(classis,txt);
+                        //     console.log("txt:"+txt+"  no="+classis);
+                        // });
+                        // second.on("click",function(){
+                        //     var txt = $(otds[3]).find("div").text();
+                        //     var classis = $("select[name='three_class']").val();
+                        //     three_change(classis,txt);
+                        //     console.log("txt:"+txt+"  no="+classis);
+                        //
+                        // });
 
-
-<script>
-    var ctx = "[[@{/}]]";
-    var form, layedit, layer, laydate;
-
-    layui.use(['form', 'layedit', 'layer', 'laydate'], function () {
-        layedit = layui.layedit;
-        laydate = layui.laydate;
-        var layer2 = layui.layer,   //内嵌式用法
-            $ = layui.jquery,
-            form = layui.form;
-        $("#submit1").click(function () {
-
-            flags = $("#flag").val();
-            console.log(flags);
-            if (flags == "1") {
-                console.log("11111")
-            } else if (flags == "0") {
-                console.log("0000")
-            }
-
-            /*var index1 = layer2.load(0);  //,{time: 20*1000}
-            $.ajax({
-                type: "POST",
-                url: ctx + 'system/osmindex/savesql',
-                data: {},
-                contentType: "application/json",
-                async: true,    //true  =  异步请求
-                // dataType: "json",
-                success: function (data, htmlData) {
-                    var res = data;
-                    if (res === "success") {
-                        layer2.close(index1);
-                        layer2.msg('插入成功!', {
-                            icon: 1,
-                            time: 1500
-                        });
-                    } else {
-                        layer2.close(index1);
-                        layer2.msg('插入失败!', {
-                            icon: 2,
-                            time: 1500
-                        });
                     }
-                },
-                error: function (data) {
+                    console.log("数据总长："+count);
+
                 }
-            });*/
+            });
         });
+
+
+
+
+
+
+    </script>
+
+
+    <script th:inline='none'>
+        var firstUrl = "http://localhost/index/getRules2?no=1&type=0&rank=5";
+        var firstNo = 1;
+        var firstType = 0;
+        var tableIns;
+        var maxNo = 5;
+        var maxRank = 5;
+        var rank = 5;
+
+        function lastRank() {
+            if (rank >= 2) {
+                rank = rank - 1;
+            }
+            change(firstNo, firstType, rank);
+        }
+
+        function nextRank() {
+            if (rank <= 4) {
+                rank = rank + 1;
+            }
+            change(firstNo, firstType, rank);
+        }
+
+
+        function nextData() {
+            if (firstType <= 2 && firstNo <= maxNo) {
+                firstType = firstType + 1;
+            } else if (firstType == 3 && firstNo <= maxNo - 1) {
+                firstType = 0;
+                firstNo = firstNo + 1;
+            }
+            change(firstNo, firstType, rank);
+        }
+
+        function lastData() {
+            if (firstType > 0) {
+                firstType = firstType - 1;
+            } else if (firstType == 0 && firstNo >= 2) {
+                firstType = 3;
+                firstNo = firstNo - 1;
+            }
+            change(firstNo, firstType, rank);
+        }
+
+        //通过两个参数进行拼接url
+        function change(no, type, rank) {
+            str = "http://localhost/index/getRules2?no=";    //1&type=0";
+            str = str + no.toString() + "&type=" + type.toString() + "&rank=" + rank.toString();
+            url = str;
+            tableIns.reload({
+                url: url
+            });
+            getData(url);
+        }
+
+layui.use('table', function () {
+    var table = layui.table;
+    //第一个实例
+    tableIns = table.render({
+        elem: '#demo'
+        , height: 312
+        , url: firstUrl //数据接口
+        , page: false //是否开启分页
+        , cols: [[ //表头
+             {field: 'id', title: '序号', width: 80, sort: true}
+            , {field: 'support', title: '支持度(%)', sort: true, width: 200}
+            , {field: 'confidence', title: '置信度(%)', sort: true, width: 200}
+            , {field: 'first', title: '首项', width: 300}
+            , {field: 'second', title: '末项', width: 300}
+        ]]
+
     });
-</script>
+});
+
+        function getData(url) {
+            $.get(url, function (data, status) {
+                var obj = JSON.parse(data); //由JSON字符串转换为JSON对象
+                firstArr = ["name", "type", "data_len"];
+                for (var i = 0; i < 3; i++) {
+                    title = $($("#first").find("p")[i]).attr("text");
+                    value = title + "  " + obj[firstArr[i]];
+                    $($("#first").find("p")[i]).text(value);
+                }
+                secondArr = ["min_sup", "min_conf", "min_sup_num"];
+                for (var i = 0; i < 3; i++) {
+                    title = $($("#second").find("p")[i]).attr("text");
+                    if (i != 2) {
+                        var number = parseFloat(obj[secondArr[i]]);
+                        value = title + "  " + (Math.floor((number * 100))).toString() + "%";
+                    } else {
+                        value = title + "  " + obj[secondArr[i]];
+                    }
+                    $($("#second").find("p")[i]).text(value);
+                }
+            });
+        }
+
+
+        function ggg() {
+            layui.use(['layer'], function () {
+                var layer2 = layui.layer;
+                var index1 = layer2.load(0, {time: 20});  //,{time: 20*1000}
+                i = setTimeout("ggg1()", 2000);//2秒后执行b()
+            });
+        }
+
+        function ggg1() {
+            layer.msg('处理完成！', {
+                icon: 1,
+                time: 500
+            });
+            $("#table1").css('display', 'block');
+            $("#table2").css('display', 'block');
+            $("#table3").css('display', 'block');
+            getData(firstUrl);
+        }
+
+
+    </script>
+
+    <script>
+        layui.use(['layer'], function () {
+
+            var layer2 = layui.layer;
+            $("#submit").click(function () {
+                console.log($(".layui-upload-choose"));
+
+                len = $(".layui-upload-choose").length
+                if (len == 0) {
+                    layer2.msg('请选择文件!', {
+                        icon: 2,
+                        time: 1500
+                    });
+                } else {
+                    var index1 = layer2.load(0, {time: 5000});  //,{time: 20*1000}
+                    i = setTimeout("bbb()", 5000);//5秒后执行b()
+                }
+            });
+        });
+
+        function bbb() {
+            layer.msg('处理完成！', {
+                icon: 1,
+                time: 1500
+            });
+        }
+    </script>
+
+
+    <script>
+layui.use(['upload', 'layer'], function () {
+    var $ = layui.jquery
+        , upload = layui.upload;
+    var layer2 = layui.layer;    //内嵌式用法
+    console.log("ggg");
+    upload.render({
+        elem: '#test10'
+        , url: '#'
+        , auto: false
+        , accept: 'file'
+        , done: function (res) {
+            layer.msg('上传成功');
+            layui.$('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.files.file);
+            console.log(res)
+        }
+        , error: function () {
+            console.log("error");
+        }
+        , before: function (obj) {
+            $("#flag").val("1");
+            console.log("上传了？？？")
+        }
+    });
+    //hahahahah
+
+});
+    </script>
+
+
+    <script>
+        var ctx = "[[@{/}]]";
+        var form, layedit, layer, laydate;
+
+        layui.use(['form', 'layedit', 'layer', 'laydate'], function () {
+            layedit = layui.layedit;
+            laydate = layui.laydate;
+            var layer2 = layui.layer,   //内嵌式用法
+                $ = layui.jquery,
+                form = layui.form;
+            $("#submit1").click(function () {
+
+                flags = $("#flag").val();
+                console.log(flags);
+                if (flags == "1") {
+                    console.log("11111")
+                } else if (flags == "0") {
+                    console.log("0000")
+                }
+
+                /*var index1 = layer2.load(0);  //,{time: 20*1000}
+                $.ajax({
+                    type: "POST",
+                    url: ctx + 'system/osmindex/savesql',
+                    data: {},
+                    contentType: "application/json",
+                    async: true,    //true  =  异步请求
+                    // dataType: "json",
+                    success: function (data, htmlData) {
+                        var res = data;
+                        if (res === "success") {
+                            layer2.close(index1);
+                            layer2.msg('插入成功!', {
+                                icon: 1,
+                                time: 1500
+                            });
+                        } else {
+                            layer2.close(index1);
+                            layer2.msg('插入失败!', {
+                                icon: 2,
+                                time: 1500
+                            });
+                        }
+                    },
+                    error: function (data) {
+                    }
+                });*/
+            });
+        });
+    </script>
 </body>
 </html>

@@ -42,18 +42,16 @@ public class XmlParseHandler extends DefaultHandler {
     private Tag tag;
     private String fatherId = "";
 
-    /**
-     * 文档解析开始调用
-     */
-    @Override
-    public void startDocument() throws SAXException {
-        super.startDocument();
-        System.out.println("----startDocument----");
-        nodes = new ArrayList<Node>();
-        roads = new ArrayList<Road>();
-        tags = new ArrayList<Tag>();
-        relations = new ArrayList<Relation>();
-    }
+/*文档解析开始调用*/
+@Override
+public void startDocument() throws SAXException {
+    super.startDocument();
+    System.out.println("----startDocument----");
+    nodes = new ArrayList<Node>();
+    roads = new ArrayList<Road>();
+    tags = new ArrayList<Tag>();
+    relations = new ArrayList<Relation>();
+}
 
     /**
      * 文档解析结束后调用
@@ -122,172 +120,31 @@ public class XmlParseHandler extends DefaultHandler {
      * @param localName : 标签的名称
      * @param qName     : 带命名空间的标签名称
      */
-    @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-
-        super.startElement(uri, localName, qName, attributes);
-
-        tag = new Tag();
-        if ("relation".equals(qName)) {
-            relation = new Relation();
-
-            for (int i = 0; i < attributes.getLength(); i++) {
-                if (attributes.getQName(i).equals("id")) {
-                    fatherId = attributes.getValue(i);
-
-                    //System.out.println("fatherId:"+fatherId);;
-                    relation.setNid(fatherId);
-
+@Override
+public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    super.startElement(uri, localName, qName, attributes);
+    // 解析node节点
+    if ("node".equals(qName)) {
+        node = new Node();
+        for (int i = 0; i < attributes.getLength(); i++) {
+            String name = attributes.getQName(i);
+            String value = attributes.getValue(i);
+            switch (name) {
+                case "id":
+                    if (!value.equals("")) node.setNid(value);
                     break;
-                }
+                case "visible":
+                    if (!value.equals("")) node.setVisible(value);
+                    break;
+                /*省略其他case*/
+                default:
+                    break;
             }
-            currentTag = qName;
         }
-        //System.out.println(qName + "-StartElement()");
-        //System.out.println("uri:" + uri + "  localName:" + localName + "  qName:" + qName + "  Attributes:" + attributes.toString());
-        if ("node".equals(qName)) { // 一个node节点
-            node = new Node();
-            for (int i = 0; i < attributes.getLength(); i++) {
-                /**********************/
-                /*int length = attributes.getQName(i).length();
-                System.out.print("attribute_name：" + attributes.getQName(i));
-                for (int j = 0; j < 20 - length; j++) System.out.print(" ");
-                 System.out.println("attribute_value：" + attributes.getValue(i));*/
-                /************************/
-                String name = attributes.getQName(i);
-                String value = attributes.getValue(i);
-
-                switch (name) {
-                    case "id":
-                        if (!value.equals("")) node.setNid(value);
-                        break;
-                    case "visible":
-                        if (!value.equals("")) node.setVisible(value);
-                        break;
-                    case "version":
-                        if (!value.equals("")) node.setVersion(Integer.valueOf(value));
-                        break;
-                    case "changeset":
-                        if (!value.equals("")) node.setChangeset(value);
-                        break;
-                    case "timestamp":
-                        if (!value.equals("")) {
-                            try {
-                                node.setTimestamp(TimeUtils.StampToDate(value));
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        break;
-                    case "user":
-                        if (!value.equals("")) node.setUser(value);
-                        break;
-                    case "uid":
-                        if (!value.equals("")) node.setUid(Integer.valueOf(value));
-                        break;
-                    case "lat":
-                        if (!value.equals("")) node.setLat(value);
-                        break;
-                    case "lon":
-                        if (!value.equals("")) node.setLon(value);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            //  System.out.println("node-id = " + way.getNid());
-            currentTag = "node"; // 把当前标签记录下来
-        }
-        //node下的tag
-        if ("node".equals(currentTag) && "tag".equals(qName)) {
-            String kk = attributes.getValue("k");
-            String vv = attributes.getValue("v");
-            keys = keys + kk + ';';
-            values = values + vv + ';';
-            node.setTagkey(keys);
-            node.setTagvalue(values);
-
-            tag.setFather("node");
-            tag.setFid(node.getNid());
-            tag.setTagkey(kk);
-            tag.setTagvalue(vv);
-            // System.out.println("key = " + keys + "   value = " + values);
-        }
-        if ("way".equals(qName)) { // 一条road
-            road = new Road();
-            for (int i = 0; i < attributes.getLength(); i++) {
-                String name = attributes.getQName(i);
-                String value = attributes.getValue(i);
-                switch (name) {
-                    case "id":
-                        if (!value.equals("")) road.setNid(value);
-                        break;
-                    case "visible":
-                        if (!value.equals("")) road.setVisible(value);
-                        break;
-                    case "version":
-                        if (!value.equals("")) road.setVersion(Integer.valueOf(value));
-                        break;
-                    case "changeset":
-                        if (!value.equals("")) road.setChangeset(value);
-                        break;
-                    case "timestamp":
-                        if (!value.equals("")) {
-                            try {
-                                road.setTimestamp(TimeUtils.StampToDate(value));
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        break;
-                    case "user":
-                        if (!value.equals("")) road.setUser(value);
-                        break;
-                    case "uid":
-                        if (!value.equals("")) road.setUid(Integer.valueOf(value));
-                        break;
-                    default:
-                        break;
-                }
-            }
-            //System.out.println("road-id = " + road.getNid());
-            currentTag = "way"; // 把当前标签记录下来
-        }
-        //解析《way》下的tag
-        if ("way".equals(currentTag) && "tag".equals(qName)) {
-            String kk = attributes.getValue("k");
-            String vv = attributes.getValue("v");
-            Rkey = Rkey + kk + ';';
-            Rvalue = Rvalue + vv + ';';
-            road.setTagkey(Rkey);
-            road.setTagvalue(Rvalue);
-            //System.out.println("Rkey = " + Rkey + "   Rvalue = " + Rvalue);
-            tag.setFather("way");
-            tag.setFid(road.getNid());
-            tag.setTagkey(kk);
-            tag.setTagvalue(vv);
-        }
-        //解析《way》下的nd
-        if ("way".equals(currentTag) && "nd".equals(qName)) {
-            Rnd = Rnd + attributes.getValue("ref") + ';';
-            road.setNd(Rnd);
-        }
-
-        if ("relation".equals(currentTag) && "tag".equals(qName)) {
-            String kk = attributes.getValue("k");
-            String vv = attributes.getValue("v");
-            ReKey = ReKey + kk + ';';
-            ReValue = ReValue + vv + ';';
-            relation.setTagkey(ReKey);
-            relation.setTagvalue(ReValue);
-            //System.out.println("得到的："+relation.getNid());
-
-            tag.setFather("relation");
-            tag.setFid(fatherId);
-            tag.setTagkey(kk);
-            tag.setTagvalue(vv);
-        }
+        currentTag = "node"; // 把当前标签记录下来
     }
+    //省略其他标签的解析
+}
 
     /**
      * @Description: 作用是解析闭合标签，如<name>Sumtudou</name>,得到里面的Sumtudou
