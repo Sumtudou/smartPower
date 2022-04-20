@@ -16,10 +16,10 @@ project:
 spring:
 ## 数据库配置
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/osm?useSSL=false
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://119.91.20.111:3306/osm?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8&autoReconnect=true
     username: root
-    password: 123456
+    password: Ect2020!!
 
 ## jpa配置
   jpa:
