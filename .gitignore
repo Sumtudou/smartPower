@@ -1,3 +1,4 @@
 /admin/target/
 /.idea
 /common/target/
+**/target/
